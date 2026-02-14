@@ -1,0 +1,94 @@
+<div class="container py-4" style="max-width: 900px;">
+  <div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+      <h1 class="h4 mb-1">Your Submission</h1>
+      <div class="text-muted small">
+        <%= @week.title %> • <%= @group.name %>
+      </div>
+    </div>
+
+    <%= link_to "Back to Week",
+          group_week_path(@group, @week),
+          class: "btn btn-outline-secondary" %>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+
+      <%= form_with model: @submission,
+                    url: group_week_submission_path(@group, @week),
+                    method: (@submission.persisted? ? :patch : :post),
+                    local: true do |f| %>
+
+      <% if @submission.errors.any? %>
+      <div class="alert alert-danger">
+        <strong>Please fix:</strong>
+        <ul class="mb-0">
+          <% @submission.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+      <% end %>
+
+      <!-- Upload -->
+      <div class="mb-3">
+        <%= f.label :photos, "Add photos (up to 3 total)", class: "form-label" %>
+        <%= f.file_field :photos,
+                multiple: true,
+                accept: "image/*",
+                class: "form-control",
+                disabled: (@submission.photos.attachments.size >= 3) %>
+
+        <div class="form-text">
+          You currently have <%= @submission.photos.attachments.size %>/3 uploaded.
+        </div>
+      </div>
+
+      <!-- Caption -->
+      <div class="mb-3">
+        <%= f.label :caption, class: "form-label" %>
+        <%= f.text_area :caption,
+                rows: 3,
+                class: "form-control",
+                placeholder: "Optional notes, EXIF, or thoughts…" %>
+      </div>
+
+      <%= f.submit (@submission.persisted? ? "Update Submission" : "Save Submission"),
+              class: "btn btn-primary" %>
+
+      <% end %>
+
+      <% if @submission.persisted? && @submission.photos.attached? %>
+      <hr>
+
+      <div class="row g-3">
+        <% @submission.photos.each_with_index do |photo, idx| %>
+        <div class="col-12 col-md-4">
+          <div class="card h-100">
+            <a href="#" data-photo-lightbox data-full-url="<%= url_for(photo) %>" class="d-block">
+              <%= image_tag photo, class: "img-fluid rounded-top" %>
+            </a>
+
+            <div class="card-body py-2">
+              <div class="small text-muted mb-2">
+                Photo <%= idx + 1 %>
+              </div>
+
+              <%= link_to "Remove",
+                        photo_path(photo.id),
+                        data: {
+                          turbo_method: :delete,
+                          turbo_confirm: "Remove this photo?"
+                        },
+                        class: "btn btn-sm btn-outline-danger" %>
+            </div>
+          </div>
+        </div>
+        <% end %>
+      </div>
+      <% end %>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  group: one
+  email: MyString
+  token: MyString
+  invited_by_id: 
+  accepted_at: 2026-02-13 10:17:01
+
+two:
+  group: two
+  email: MyString
+  token: MyString
+  invited_by_id: 
+  accepted_at: 2026-02-13 10:17:01

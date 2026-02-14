@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  week: one
+  user: one
+  caption: MyText
+  locked_at: 2026-02-13 10:18:02
+
+two:
+  week: two
+  user: two
+  caption: MyText
+  locked_at: 2026-02-13 10:18:02

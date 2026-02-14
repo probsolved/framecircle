@@ -1,0 +1,31 @@
+<div class="container py-4" style="max-width: 720px;">
+  <h1 class="h3 mb-3">Create a Group</h1>
+
+  <%= form_with model: @group, local: true do |f| %>
+  <% if @group.errors.any? %>
+  <div class="alert alert-danger">
+    <strong>Please fix:</strong>
+    <ul class="mb-0">
+      <% @group.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= f.label :name, class: "form-label" %>
+    <%= f.text_field :name, class: "form-control", placeholder: "e.g., 52Frames Group 12", required: true %>
+  </div>
+
+  <div class="form-check mb-3">
+    <%= f.check_box :private, class: "form-check-input", checked: true %>
+    <%= f.label :private, "Private (recommended)", class: "form-check-label" %>
+  </div>
+
+  <div class="d-flex gap-2">
+    <%= f.submit "Create Group", class: "btn btn-primary" %>
+    <%= link_to "Cancel", groups_path, class: "btn btn-outline-secondary" %>
+  </div>
+  <% end %>
+</div>

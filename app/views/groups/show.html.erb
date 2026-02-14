@@ -1,0 +1,58 @@
+<div class="d-flex justify-content-between align-items-start mb-3">
+  <div>
+    <h1 class="h4 mb-1"><%= @group.name %></h1>
+    <div class="text-muted">
+      <%= pluralize(@group.members.count, "member") %>
+    </div>
+  </div>
+
+  <% membership = GroupMembership.find_by(group: @group, user: current_user) %>
+  <% is_admin = @group.owner_id == current_user.id || membership&.role.to_s == "admin" %>
+
+  <div class="d-flex gap-2">
+    <% if is_admin %>
+    <%= link_to "Manage Group",
+            group_manage_path(@group),
+            class: "btn btn-outline-primary" %>
+    <% end %>
+
+    <%= link_to "Back to Groups", groups_path, class: "btn btn-outline-secondary" %>
+  </div>
+</div>
+
+<div class="card glass-card p-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h6 mb-0">Weeks</h2>
+
+    <% if is_admin %>
+    <%= button_to "Create Week",
+            group_weeks_path(@group),
+            method: :post,
+            class: "btn btn-sm btn-primary" %>
+    <% end %>
+  </div>
+
+  <% if @weeks.any? %>
+  <div class="list-group">
+    <% @weeks.each do |week| %>
+    <%= link_to group_week_path(@group, week),
+              class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center" do %>
+    <div>
+      <div class="fw-semibold"><%= week.title %></div>
+      <div class="small text-muted">
+        <%= week.starts_on.strftime("%b %-d") %> – <%= week.ends_on.strftime("%b %-d, %Y") %>
+      </div>
+    </div>
+
+    <span class="badge bg-secondary">
+      <%= week.status %>
+    </span>
+    <% end %>
+    <% end %>
+  </div>
+  <% else %>
+  <div class="text-muted text-center py-4">
+    No weeks yet.
+  </div>
+  <% end %>
+</div>

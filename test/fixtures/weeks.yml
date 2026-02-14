@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  group: one
+  title: MyString
+  starts_on: 2026-02-13
+  ends_on: 2026-02-13
+  status: 1
+
+two:
+  group: two
+  title: MyString
+  starts_on: 2026-02-13
+  ends_on: 2026-02-13
+  status: 1

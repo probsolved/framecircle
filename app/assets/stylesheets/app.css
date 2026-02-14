@@ -1,0 +1,162 @@
+/* app/assets/stylesheets/app.css
+   FrameCircle app styles — updated to a 52Frames-like light editorial theme.
+   Uses CSS variables defined in app/assets/stylesheets/theme.css
+*/
+
+:root {
+  /* Fallbacks (in case theme.css isn't loaded yet) */
+  --fc-bg: #f6f7f8;
+  --fc-surface: #ffffff;
+  --fc-border: #e5e7eb;
+
+  --fc-text: #1f2933;
+  --fc-muted: #6b7280;
+
+  --fc-primary: #ee6b5d;
+  /* coral */
+  --fc-secondary: #1aa6a6;
+  /* teal */
+
+  --fc-radius: 12px;
+}
+
+/* Base app background (52Frames-like) */
+.app-body {
+  min-height: 100vh;
+  background: var(--fc-bg);
+  color: var(--fc-text);
+}
+
+/* Navbar */
+.app-navbar {
+  background: #ffffff;
+  border-bottom: 1px solid var(--fc-border);
+}
+
+/* Bootstrap navbar text colors on light background */
+.app-navbar .navbar-brand,
+.app-navbar .navbar-brand:hover {
+  color: var(--fc-text);
+}
+
+.app-navbar .nav-link {
+  color: var(--fc-muted);
+}
+
+.app-navbar .nav-link:hover,
+.app-navbar .nav-link:focus {
+  color: var(--fc-text);
+}
+
+/* Brand mark (logo) */
+.brand-mark {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+/* Cards / surfaces */
+.glass-card {
+  background: var(--fc-surface);
+  border: 1px solid var(--fc-border);
+  border-radius: var(--fc-radius);
+  box-shadow: none;
+  /* editorial, not glassy */
+}
+
+.card {
+  border-radius: var(--fc-radius);
+  background: var(--fc-surface);
+  border: 1px solid var(--fc-border);
+}
+
+/* Buttons */
+.btn-primary {
+  background: var(--fc-primary);
+  border-color: var(--fc-primary);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background: color-mix(in srgb, var(--fc-primary) 92%, #000);
+  border-color: color-mix(in srgb, var(--fc-primary) 92%, #000);
+  color: #ffffff;
+}
+
+.btn-outline-secondary {
+  border-color: var(--fc-secondary);
+  color: var(--fc-secondary);
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus {
+  background: var(--fc-secondary);
+  border-color: var(--fc-secondary);
+  color: #ffffff;
+}
+
+/* Inputs */
+.form-control,
+.form-select {
+  background-color: #ffffff;
+  border-color: var(--fc-border);
+  color: var(--fc-text);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: color-mix(in srgb, var(--fc-secondary) 70%, #ffffff);
+  box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--fc-secondary) 20%, transparent);
+}
+
+/* Muted text */
+.text-muted {
+  color: var(--fc-muted) !important;
+}
+
+/* Lists */
+.list-group-item {
+  background: var(--fc-surface);
+  color: var(--fc-text);
+  border-color: var(--fc-border);
+}
+
+/* Helpful utility: readable group titles */
+.group-title {
+  color: var(--fc-text);
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+/* Footer */
+.app-footer {
+  background: #ffffff;
+  border-top: 1px solid var(--fc-border);
+}
+
+.footer-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.footer-link {
+  color: var(--fc-secondary);
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-main {
+  flex: 1 0 auto;
+}

@@ -1,0 +1,34 @@
+<nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top">
+  <div class="container">
+    <%= link_to root_path, class: "navbar-brand d-flex align-items-center gap-2" do %>
+    <%= image_tag "framecircle-logo.png", class: "brand-mark", style: "width:28px;height:28px;", alt: "FrameCircle" %> <span class="fw-semibold">FrameCircle</span>
+    <% end %>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#appNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="appNavbar">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <% if user_signed_in? %>
+        <li class="nav-item"><%= link_to "Groups", groups_path, class: "nav-link" %></li>
+        <% end %>
+      </ul>
+
+      <div class="d-flex gap-2">
+        <% if user_signed_in? %>
+        <span class="navbar-text text-white-50 d-none d-lg-inline">
+          <%= current_user.email %>
+        </span>
+        <%= button_to "Sign out",
+                destroy_user_session_path,
+                method: :delete,
+                class: "btn btn-outline-light btn-sm" %>
+        <% else %>
+        <%= link_to "Sign in", new_user_session_path, class: "btn btn-outline-light btn-sm" %>
+        <%= link_to "Create account", new_user_registration_path, class: "btn btn-info btn-sm fw-semibold" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</nav>

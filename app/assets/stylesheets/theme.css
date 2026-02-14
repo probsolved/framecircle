@@ -1,0 +1,25 @@
+/* FrameCircle theme — inspired by 52Frames */
+
+:root {
+  /* Surfaces */
+  --fc-bg: #f6f7f8;
+  /* page background */
+  --fc-surface: #ffffff;
+  /* cards */
+  --fc-border: #e5e7eb;
+  /* subtle borders */
+
+  /* Text */
+  --fc-text: #1f2933;
+  /* main text */
+  --fc-muted: #6b7280;
+  /* secondary text */
+
+  /* Accents (52Frames-style) */
+  --fc-primary: #ee6b5d;
+  /* coral */
+  --fc-secondary: #1aa6a6;
+  /* teal */
+
+  --fc-radius: 12px;
+}

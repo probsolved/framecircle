@@ -1,0 +1,59 @@
+<div class="auth-wrap">
+  <div class="card auth-card shadow-lg rounded-4">
+    <div class="card-body p-4 p-md-5 text-white">
+      <%= image_tag "framecircle-logo.png", class: "auth-logo", alt: "FrameCircle" %>
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <%# Swap filename as needed %>
+
+
+        <div>
+          <div class="h4 mb-0 fw-semibold">Mini-Groups</div>
+          <div class="text-white-50 small">Critique rooms for weekly photo challenges</div>
+        </div>
+      </div>
+
+      <h1 class="h5 mb-3">Sign in</h1>
+
+      <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+      <div class="mb-3">
+        <%= f.label :email, class: "form-label text-white-50" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email",
+                class: "form-control form-control-lg bg-dark text-white border-secondary",
+                placeholder: "you@example.com" %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :password, class: "form-label text-white-50" %>
+        <%= f.password_field :password, autocomplete: "current-password",
+                class: "form-control form-control-lg bg-dark text-white border-secondary",
+                placeholder: "••••••••" %>
+      </div>
+
+      <% if devise_mapping.rememberable? %>
+      <div class="form-check mb-3">
+        <%= f.check_box :remember_me, class: "form-check-input" %>
+        <%= f.label :remember_me, class: "form-check-label text-white-50" %>
+      </div>
+      <% end %>
+
+      <div class="d-grid gap-2">
+        <%= f.submit "Sign in", class: "btn btn-info btn-lg fw-semibold" %>
+        <%= link_to "Back to home", root_path, class: "btn btn-outline-light" %>
+      </div>
+      <% end %>
+
+      <hr class="my-4 border-secondary">
+
+      <div class="d-flex justify-content-between align-items-center small">
+        <div class="text-white-50">
+          New here?
+          <%= link_to "Create an account", new_registration_path(resource_name), class: "link-info text-decoration-none" %>
+        </div>
+
+        <div>
+          <%= link_to "Forgot password?", new_password_path(resource_name), class: "link-info text-decoration-none" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

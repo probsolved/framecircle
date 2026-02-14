@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  submission: one
+  user: one
+  photo_index: 1
+  body: MyText
+  parent_id: 
+
+two:
+  submission: two
+  user: two
+  photo_index: 1
+  body: MyText
+  parent_id: 
