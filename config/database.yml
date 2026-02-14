@@ -16,12 +16,16 @@ production:
     <<: *default
     url: <%= ENV["DATABASE_URL"] %>
 
-  # Solid Cable expects this
-  cable:
+  # Rails 8 "Solid" components expect these named DB configs.
+  # On Render free tier, point them all at the same Postgres DB.
+  cache:
     <<: *default
     url: <%= ENV["DATABASE_URL"] %>
 
-  # Solid Queue expects this
   queue:
+    <<: *default
+    url: <%= ENV["DATABASE_URL"] %>
+
+  cable:
     <<: *default
     url: <%= ENV["DATABASE_URL"] %>
