@@ -65,3 +65,5 @@ end
 gem "devise", "~> 5.0"
 
 gem "cssbundling-rails", "~> 1.4"
+
+gem "aws-sdk-s3", require: false
