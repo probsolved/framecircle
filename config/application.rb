@@ -8,6 +8,7 @@ Bundler.require(*Rails.groups)
 
 module Framecircle
   class Application < Rails::Application
+    config.active_storage.checksum_implementation = nil
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
 
