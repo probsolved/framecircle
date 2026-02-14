@@ -1,0 +1,41 @@
+<div class="container py-4" style="max-width: 720px;">
+  <div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+      <h1 class="h4 mb-1">Edit Profile</h1>
+      <div class="text-muted small"><%= current_user.email %></div>
+    </div>
+    <%= link_to "Back", account_path, class: "btn btn-outline-secondary" %>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <%= form_with model: current_user, url: account_path, method: :patch, local: true, html: { multipart: true } do |f| %>
+
+      <div class="mb-3">
+        <%= f.label :display_name, class: "form-label" %>
+        <%= f.text_field :display_name, class: "form-control", placeholder: "Your name (shown to others)" %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :location, class: "form-label" %>
+        <%= f.text_field :location, class: "form-control", placeholder: "e.g., Tulsa, OK" %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :frames_username, "52Frames Profile Number", class: "form-label" %>
+        <%= f.text_field :frames_username, class: "form-control", placeholder: "e.g., 123456" %>
+        <div class="form-text">We’ll link to https://52frames.com/photographer/&lt;username&gt;.</div>
+      </div>
+
+      <% if current_user.respond_to?(:avatar) %>
+      <div class="mb-3">
+        <%= f.label :avatar, class: "form-label" %>
+        <%= f.file_field :avatar, class: "form-control", accept: "image/*" %>
+      </div>
+      <% end %>
+
+      <%= f.submit "Save", class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+</div>

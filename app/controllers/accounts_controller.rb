@@ -22,6 +22,6 @@ class AccountsController < ApplicationController
   private
 
   def account_params
-    params.require(:user).permit(:display_name, :bio, :frames_username, :avatar)
+    params.require(:user).permit(:display_name, :location, :frames_username, :avatar)
   end
 end

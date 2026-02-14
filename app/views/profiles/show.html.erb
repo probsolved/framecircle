@@ -33,7 +33,7 @@
         <% if @user.respond_to?(:frames_profile_url) && @user.frames_profile_url.present? %>
         <%= link_to "52Frames Profile", @user.frames_profile_url, target: "_blank", rel: "noopener" %>
         <% elsif @user.respond_to?(:frames_username) && @user.frames_username.present? %>
-        <%= link_to "52Frames Profile", "https://52frames.com/#{@user.frames_username}", target: "_blank", rel: "noopener" %>
+        <%= link_to "52Frames Profile", "https://52frames.com/photographer/#{@user.frames_username}", target: "_blank", rel: "noopener" %>
         <% else %>
         <div class="text-muted small">52Frames profile not set</div>
         <% end %>

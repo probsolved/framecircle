@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top">
   <div class="container">
     <%= link_to root_path, class: "navbar-brand d-flex align-items-center gap-2" do %>
-    <%= image_tag "framecircle-logo.png", class: "brand-mark", style: "width:28px;height:28px;", alt: "FrameCircle" %> <span class="fw-semibold">FrameCircle</span>
+    <%= image_tag "framecircle-logo.png", class: "brand-mark", style: "width:28px;height:28px;", alt: "FramerCircle" %> <span class="fw-semibold">FramerCircle</span>
     <% end %>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#appNavbar">
@@ -12,7 +12,8 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <% if user_signed_in? %>
         <li class="nav-item"><%= link_to "Groups", groups_path, class: "nav-link" %></li>
-        <% end %>
+        <li class="nav-item"><%= link_to "Profile", account_path, class: "nav-link" %></li>
+          <% end %>
       </ul>
 
       <div class="d-flex gap-2">
