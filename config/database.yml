@@ -16,8 +16,12 @@ production:
     <<: *default
     url: <%= ENV["DATABASE_URL"] %>
 
-  # Solid Cable expects a `cable` database config. On Render free tier,
-  # point it at the same database as primary.
+  # Solid Cable expects this
   cable:
+    <<: *default
+    url: <%= ENV["DATABASE_URL"] %>
+
+  # Solid Queue expects this
+  queue:
     <<: *default
     url: <%= ENV["DATABASE_URL"] %>
