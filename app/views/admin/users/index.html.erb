@@ -1,0 +1,72 @@
+<%# app/views/admin/users/index.html.erb %>
+
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+      <h1 class="h4 mb-1">All Users (Admin)</h1>
+      <div class="text-muted small"><%= pluralize(@users.size, "user") %> total</div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table mb-0 align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>User</th>
+            <th>Email</th>
+            <th class="text-center">Site Admin</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @users.each do |u| %>
+          <tr>
+            <td class="fw-semibold">
+              <%= link_to((u.respond_to?(:display_name) && u.display_name.present?) ? u.display_name : "User ##{u.id}", profile_path(u), class: "text-decoration-none") %>
+            </td>
+
+            <td class="text-muted"><%= u.email %></td>
+
+            <td class="text-center">
+              <% if u.respond_to?(:admin) && u.admin %>
+              <span class="badge bg-danger">Admin</span>
+              <% else %>
+              <span class="badge bg-secondary">No</span>
+              <% end %>
+            </td>
+
+            <td class="text-end">
+              <% if u.respond_to?(:admin) %>
+              <% if u.admin %>
+              <%= button_to "Remove Admin",
+                          admin_user_path(u),
+                          method: :patch,
+                          params: { user: { admin: false } },
+                          class: "btn btn-sm btn-outline-danger" %>
+              <% else %>
+              <%= button_to "Make Admin",
+                          admin_user_path(u),
+                          method: :patch,
+                          params: { user: { admin: true } },
+                          class: "btn btn-sm btn-danger" %>
+              <% end %>
+              <% end %>
+
+              <% if u != current_user %>
+              <%= button_to "Delete",
+                        admin_user_path(u),
+                        method: :delete,
+                        data: { turbo_confirm: "Delete this user? This cannot be undone." },
+                        class: "btn btn-sm btn-outline-secondary ms-2" %>
+              <% end %>
+            </td>
+          </tr>
+          <% end %>
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+</div>

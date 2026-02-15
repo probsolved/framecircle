@@ -22,8 +22,17 @@
           <%= link_to "Groups", groups_path, class: "nav-link" %>
         </li>
 
-          <% if user_signed_in? && current_user.admin? %>
-        <li class="nav-item"><%= link_to "Admin", admin_groups_path, class: "nav-link" %></li>
+        <% if user_signed_in? && current_user.admin? %>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Admin
+          </a>
+
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
+            <li><%= link_to "All Groups", admin_groups_path, class: "dropdown-item" %></li>
+            <li><%= link_to "All Users", admin_users_path, class: "dropdown-item" %></li>
+          </ul>
+        </li>
         <% end %>
 
         <li class="nav-item">

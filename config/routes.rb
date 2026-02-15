@@ -36,5 +36,6 @@ Rails.application.routes.draw do
 
   namespace :admin do
     resources :groups, only: [ :index ]
+    resources :users, only: [ :index, :show, :edit, :update, :destroy ]
   end
 end

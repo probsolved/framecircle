@@ -1,3 +1,5 @@
+<%# app/views/admin/group_memberships/index.html.erb %>
+
 <div class="container py-4">
   <div class="d-flex justify-content-between align-items-start mb-3">
     <div>
@@ -6,7 +8,8 @@
     </div>
 
     <div class="d-flex gap-2">
-      <%= link_to "Back to Group", group_path(@group), class: "btn btn-outline-secondary" %>
+      <%= link_to "Back to Admin Groups", admin_groups_path, class: "btn btn-outline-secondary" %>
+      <%= link_to "View Public Group", group_path(@group), class: "btn btn-outline-secondary" %>
     </div>
   </div>
 
@@ -16,25 +19,23 @@
 
     <div class="col-12 col-md-6 col-lg-4">
       <div class="card shadow-sm h-100">
-        <div class="card-body d-flex gap-3 align-items-center">
+        <div class="card-body d-flex gap-3 align-items-start">
 
           <!-- Avatar -->
           <div class="flex-shrink-0">
             <% if u.respond_to?(:avatar) && u.avatar.attached? %>
             <%= image_tag url_for(u.avatar),
-                      class: "rounded-circle border",
-                      style: "width:56px;height:56px;object-fit:cover;" %>
+                              class: "rounded-circle border",
+                              style: "width:56px;height:56px;object-fit:cover;" %>
             <% else %>
             <div class="rounded-circle border bg-light d-flex align-items-center justify-content-center" style="width:56px;height:56px;">
-              <span class="text-muted fw-semibold">
-                <%= u.email.to_s.first&.upcase %>
-              </span>
+              <span class="text-muted fw-semibold"><%= u.email.to_s.first&.upcase %></span>
             </div>
             <% end %>
           </div>
 
-          <!-- Info -->
-          <div class="min-w-0">
+          <!-- Info + Controls -->
+          <div class="min-w-0 flex-grow-1">
             <!-- Internal profile link -->
             <div class="fw-semibold text-truncate">
               <%= link_to(
@@ -44,7 +45,9 @@
                     ) %>
             </div>
 
-            <div class="small">
+            <div class="small text-muted text-truncate"><%= u.email %></div>
+
+            <div class="small mt-1">
               <%= link_to "View Profile", profile_path(u), class: "link-secondary" %>
             </div>
 
@@ -52,29 +55,93 @@
             <% if u.respond_to?(:frames_profile_url) && u.frames_profile_url.present? %>
             <div class="small">
               <%= link_to "52Frames Profile",
-                        u.frames_profile_url,
-                        target: "_blank",
-                        rel: "noopener",
-                        class: "link-primary" %>
+                              u.frames_profile_url,
+                              target: "_blank",
+                              rel: "noopener",
+                              class: "link-primary" %>
             </div>
             <% elsif u.respond_to?(:frames_username) && u.frames_username.present? %>
             <div class="small">
               <%= link_to "52Frames Profile",
-                        "https://52frames.com/photographer/#{u.frames_username}",
-                        target: "_blank",
-                        rel: "noopener",
-                        class: "link-primary" %>
+                              "https://52frames.com/photographer/#{u.frames_username}",
+                              target: "_blank",
+                              rel: "noopener",
+                              class: "link-primary" %>
             </div>
             <% else %>
             <div class="small text-muted">52Frames profile not set</div>
             <% end %>
 
-            <!-- Role -->
-            <% if m.respond_to?(:role) && m.role.present? %>
-            <div class="small text-muted">Role: <%= m.role %></div>
-            <% end %>
-          </div>
+            <!-- Role badges -->
+            <div class="mt-2 d-flex flex-wrap gap-2">
+              <% if m.respond_to?(:role) && m.role.present? %>
+              <span class="badge bg-secondary">Group: <%= m.role %></span>
+              <% else %>
+              <span class="badge bg-secondary">Group: member</span>
+              <% end %>
 
+              <% if u.respond_to?(:admin) && u.admin %>
+              <span class="badge bg-danger">Site Admin</span>
+              <% end %>
+
+              <% if u.id == @group.owner_id %>
+              <span class="badge bg-info text-dark">Owner</span>
+              <% end %>
+            </div>
+
+            <hr class="my-3">
+
+            <!-- Admin actions -->
+            <div class="d-flex flex-wrap gap-2">
+
+              <%# ----- Mini-group admin toggle (membership role) ----- %>
+              <% current_role = (m.respond_to?(:role) ? m.role.to_s : "") %>
+              <% is_group_admin = (current_role == "admin") %>
+
+              <% if is_group_admin %>
+              <%= button_to "Demote to Member",
+                                admin_group_membership_path(@group, m),
+                                method: :patch,
+                                params: { membership: { role: "member" } },
+                                class: "btn btn-sm btn-outline-secondary" %>
+              <% else %>
+              <%= button_to "Promote to Group Admin",
+                                admin_group_membership_path(@group, m),
+                                method: :patch,
+                                params: { membership: { role: "admin" } },
+                                class: "btn btn-sm btn-outline-primary" %>
+              <% end %>
+
+              <%# ----- Site admin toggle (users.admin boolean) ----- %>
+              <% if u.respond_to?(:admin) %>
+              <% if u.admin %>
+              <%= button_to "Remove Site Admin",
+                                  admin_user_path(u),
+                                  method: :patch,
+                                  params: { user: { admin: false } },
+                                  class: "btn btn-sm btn-outline-danger" %>
+              <% else %>
+              <%= button_to "Make Site Admin",
+                                  admin_user_path(u),
+                                  method: :patch,
+                                  params: { user: { admin: true } },
+                                  class: "btn btn-sm btn-danger" %>
+              <% end %>
+              <% end %>
+
+              <%# ----- Remove from group (don’t allow removing owner) ----- %>
+              <% if u.id != @group.owner_id %>
+              <%= button_to "Remove from Group",
+                                admin_group_membership_path(@group, m),
+                                method: :delete,
+                                data: { turbo_confirm: "Remove this member from the group?" },
+                                class: "btn btn-sm btn-outline-danger" %>
+              <% else %>
+              <span class="small text-muted align-self-center">Owner can’t be removed</span>
+              <% end %>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
