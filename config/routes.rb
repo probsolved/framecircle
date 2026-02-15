@@ -33,4 +33,8 @@ Rails.application.routes.draw do
   end
 
   resources :photos, only: [ :destroy ]
+
+  namespace :admin do
+    resources :groups, only: [ :index ]
+  end
 end

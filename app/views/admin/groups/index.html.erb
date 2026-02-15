@@ -1,0 +1,76 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="h4 mb-1">All Groups (Admin)</h1>
+      <div class="text-muted small">
+        <%= pluralize(@groups.count, "group") %> total
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Name</th>
+            <th>Slug</th>
+            <th>Owner</th>
+            <th class="text-center">Members</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @groups.each do |group| %>
+          <tr>
+            <td class="fw-semibold">
+              <%= group.name %>
+            </td>
+
+            <td class="text-muted small">
+              <%= group.slug %>
+            </td>
+
+            <td>
+              <% if group.owner %>
+              <%= link_to(
+                        group.owner.email,
+                        profile_path(group.owner),
+                        class: "text-decoration-none"
+                      ) %>
+              <% else %>
+              <span class="text-muted">—</span>
+              <% end %>
+            </td>
+
+            <td class="text-center">
+              <span class="badge bg-secondary">
+                <%= group.group_memberships.count %>
+              </span>
+            </td>
+
+            <td class="text-end">
+              <%= link_to "View",
+                      group_path(group),
+                      class: "btn btn-sm btn-outline-primary" %>
+
+              <%= link_to "Manage",
+                      group_manage_path(group),
+                      class: "btn btn-sm btn-outline-secondary" %>
+            </td>
+          </tr>
+          <% end %>
+
+          <% if @groups.empty? %>
+          <tr>
+            <td colspan="5" class="text-center text-muted py-4">
+              No groups found.
+            </td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

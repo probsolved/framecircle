@@ -1,9 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top">
   <div class="container">
     <%= link_to root_path, class: "navbar-brand d-flex align-items-center gap-2" do %>
-    <%= image_tag "framecircle-logo.png",
-            class: "brand-mark",
-            style: "width:28px;height:28px;",
+    <%= image_tag "framercircle-logo5.png",
+            style: "width:75px",
             alt: "FramerCircle" %>
     <span class="fw-semibold">FramerCircle</span>
     <% end %>
@@ -22,6 +21,10 @@
         <li class="nav-item">
           <%= link_to "Groups", groups_path, class: "nav-link" %>
         </li>
+
+          <% if user_signed_in? && current_user.admin? %>
+        <li class="nav-item"><%= link_to "Admin", admin_groups_path, class: "nav-link" %></li>
+        <% end %>
 
         <li class="nav-item">
           <%= link_to "Profile", account_path, class: "nav-link" %>
