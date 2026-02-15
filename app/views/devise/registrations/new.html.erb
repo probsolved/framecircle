@@ -1,29 +1,99 @@
-<h2>Sign up</h2>
+<div class="auth-wrap">
+  <div class="card auth-card auth-card--wide shadow-lg rounded-4">
+    <div class="card-body p-4 p-md-5 text-white">
+      <%= image_tag "framercircle-logo3.png", style: "width:300px", alt: "FramerCircle" %>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div>
+          <div class="h4 mb-0 fw-semibold">Mini-Groups</div>
+          <div class="text-white-50 small">
+            Have an invitation link already?
+            <%= link_to "Sign in", new_session_path(resource_name), class: "link-info text-decoration-none" %>
+            and use the link!
+          </div>
+        </div>
+      </div>
 
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
+      <h1 class="h5 mb-3">Create account</h1>
+
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+
+      <%# --- Optional profile fields (only render if columns exist) --- %>
+      <% if resource.respond_to?(:display_name) %>
+      <div class="mb-3">
+        <%= f.label :display_name, "Display name", class: "form-label text-white-50" %>
+        <%= f.text_field :display_name,
+                  class: "form-control form-control-lg bg-dark text-white border-secondary",
+                  placeholder: "Paul Roberts" %>
+      </div>
+      <% end %>
+
+      <% if resource.respond_to?(:location) %>
+      <div class="mb-3">
+        <%= f.label :location, class: "form-label text-white-50" %>
+        <%= f.text_field :location,
+                  class: "form-control form-control-lg bg-dark text-white border-secondary",
+                  placeholder: "Nashville, TN" %>
+      </div>
+      <% end %>
+
+      <% if resource.respond_to?(:frames_username) %>
+      <div class="mb-3">
+        <%= f.label :frames_username, "52Frames Profile Number", class: "form-label text-white-50" %>
+        <%= f.text_field :frames_username,
+                  class: "form-control form-control-lg bg-dark text-white border-secondary",
+                  placeholder: "your-52frames-profile-number" %>
+        <div class="form-text text-white-50">
+          Optional — used to link to your 52Frames profile (52frames.com/photographer/your-profile-number).
+        </div>
+      </div>
+      <% end %>
+
+      <div class="mb-3">
+        <%= f.label :email, class: "form-label text-white-50" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email",
+                class: "form-control form-control-lg bg-dark text-white border-secondary",
+                placeholder: "you@example.com" %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :password, class: "form-label text-white-50" %>
+        <%= f.password_field :password, autocomplete: "new-password",
+                class: "form-control form-control-lg bg-dark text-white border-secondary",
+                placeholder: "••••••••" %>
+        <% if @minimum_password_length %>
+        <div class="form-text text-white-50">
+          Minimum <%= @minimum_password_length %> characters.
+        </div>
+        <% end %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :password_confirmation, class: "form-label text-white-50" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password",
+                class: "form-control form-control-lg bg-dark text-white border-secondary",
+                placeholder: "••••••••" %>
+      </div>
+
+      <div class="d-grid gap-2">
+        <%= f.submit "Create account", class: "btn btn-info btn-lg fw-semibold" %>
+        <%= link_to "Back to home", root_path, class: "btn btn-outline-light" %>
+      </div>
+      <% end %>
+
+      <hr class="my-4 border-secondary">
+
+      <div class="d-flex justify-content-between align-items-center small">
+        <div class="text-white-50">
+          Already have an account?
+          <%= link_to "Sign in", new_session_path(resource_name), class: "link-info text-decoration-none" %>
+        </div>
+
+        <div>
+          <%= link_to "Forgot password?", new_password_path(resource_name), class: "link-info text-decoration-none" %>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div class="field">
-    <p><%= f.label :password %></p>
-    <% if @minimum_password_length %>
-      <p><em>(<%= @minimum_password_length %> characters minimum)</em></p>
-    <% end %>
-    <p><%= f.password_field :password, autocomplete: "new-password" %></p>
-  </div>
-
-  <div class="field">
-    <p><%= f.label :password_confirmation %></p>
-    <p><%= f.password_field :password_confirmation, autocomplete: "new-password" %></p>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "Sign up" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>

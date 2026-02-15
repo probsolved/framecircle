@@ -4,17 +4,25 @@
   align-items: center;
   justify-content: center;
   padding: 2rem 1rem;
-  background: radial-gradient(1200px circle at 20% 10%, rgba(13, 202, 240, 0.14), transparent 55%),
-    radial-gradient(900px circle at 85% 25%, rgba(111, 66, 193, 0.18), transparent 55%),
-    linear-gradient(180deg, #0b1220 0%, #070b13 100%);
+  background: transparent;
 }
 
 .auth-card {
   width: 100%;
-  max-width: 440px;
-  background: rgba(255, 255, 255, 0.08);
+  max-width: 440px; /* login default */
+  background: rgba(15, 18, 28, 0.95);
   border: 1px solid rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(12px);
+}
+
+.auth-card--wide {
+  max-width: 680px; /* registration width */
+}
+
+@media (max-width: 768px) {
+  .auth-card--wide {
+    max-width: 100%;
+  }
 }
 
 .auth-logo {

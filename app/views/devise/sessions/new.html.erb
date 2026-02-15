@@ -1,14 +1,14 @@
 <div class="auth-wrap">
   <div class="card auth-card shadow-lg rounded-4">
     <div class="card-body p-4 p-md-5 text-white">
-      <%= image_tag "framecircle-logo.png", class: "auth-logo", alt: "FrameCircle" %>
+      <%= image_tag "framercircle-logo3.png", style: "width:300px",alt: "FramerCircle" %>
       <div class="d-flex align-items-center gap-3 mb-4">
         <%# Swap filename as needed %>
 
 
         <div>
           <div class="h4 mb-0 fw-semibold">Mini-Groups</div>
-          <div class="text-white-50 small">Critique rooms for weekly photo challenges</div>
+          <div class="text-white-50 small">Joining with an invitation link? <%= link_to "Create an account", new_registration_path(resource_name), class: "link-info text-decoration-none" %>, then use the link!</div>
         </div>
       </div>
 

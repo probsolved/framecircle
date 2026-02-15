@@ -1,7 +1,11 @@
 <nav class="navbar navbar-expand-lg navbar-dark app-navbar sticky-top">
   <div class="container">
     <%= link_to root_path, class: "navbar-brand d-flex align-items-center gap-2" do %>
-    <%= image_tag "framecircle-logo.png", class: "brand-mark", style: "width:28px;height:28px;", alt: "FramerCircle" %> <span class="fw-semibold">FramerCircle</span>
+    <%= image_tag "framecircle-logo.png",
+            class: "brand-mark",
+            style: "width:28px;height:28px;",
+            alt: "FramerCircle" %>
+    <span class="fw-semibold">FramerCircle</span>
     <% end %>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#appNavbar">
@@ -9,27 +13,42 @@
     </button>
 
     <div class="collapse navbar-collapse" id="appNavbar">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <% if user_signed_in? %>
-        <li class="nav-item"><%= link_to "Groups", groups_path, class: "nav-link" %></li>
-        <li class="nav-item"><%= link_to "Profile", account_path, class: "nav-link" %></li>
-          <% end %>
-      </ul>
+      <%# Left side empty (or put public links here later) %>
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
 
-      <div class="d-flex gap-2">
+      <%# Right side: Groups / Profile / Log out %>
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
         <% if user_signed_in? %>
-        <span class="navbar-text text-white-50 d-none d-lg-inline">
-          <%= current_user.email %>
-        </span>
-        <%= button_to "Sign out",
-                destroy_user_session_path,
-                method: :delete,
-                class: "btn btn-outline-light btn-sm" %>
+        <li class="nav-item">
+          <%= link_to "Groups", groups_path, class: "nav-link" %>
+        </li>
+
+        <li class="nav-item">
+          <%= link_to "Profile", account_path, class: "nav-link" %>
+        </li>
+
+        <li class="nav-item d-none d-lg-flex">
+          <span class="navbar-text text-light-emphasis">
+            <%= current_user.email %>
+          </span>
+        </li>
+
+        <li class="nav-item">
+          <%= button_to "Log out",
+                  destroy_user_session_path,
+                  method: :delete,
+                  class: "btn btn-outline-danger btn-sm",
+                  form: { class: "d-inline", data: { turbo: false } } %>
+        </li>
         <% else %>
-        <%= link_to "Sign in", new_user_session_path, class: "btn btn-outline-light btn-sm" %>
-        <%= link_to "Create account", new_user_registration_path, class: "btn btn-info btn-sm fw-semibold" %>
+        <li class="nav-item">
+          <%= link_to "Sign in", new_user_session_path, class: "btn btn-outline-light btn-sm" %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Create account", new_user_registration_path, class: "btn btn-info btn-sm fw-semibold" %>
+        </li>
         <% end %>
-      </div>
+      </ul>
     </div>
   </div>
 </nav>
