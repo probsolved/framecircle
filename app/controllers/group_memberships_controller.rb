@@ -1,36 +1,22 @@
 class GroupMembershipsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_group
-  before_action :require_admin!
+  before_action :set_membership, only: [ :destroy, :update ]
 
-  def create
-    email = params.dig(:group_membership, :email).to_s.strip.downcase
-    user = User.find_by(email: email)
-
-    unless user
-      return redirect_to group_manage_path(@group), alert: "No user found with that email."
+  def update
+    # Only allow site admins, group owner, or group admins
+    unless can_manage_members?(@group)
+      return redirect_back fallback_location: group_members_path(@group),
+                           alert: "Not authorized."
     end
 
-    membership = GroupMembership.find_or_initialize_by(group: @group, user: user)
-    membership.role = membership.role.presence || "member"
-    membership.status = "active" if membership.respond_to?(:status) # if you have status enum
-
-    if membership.save
-      redirect_to group_manage_path(@group), notice: "Added #{user.email}."
+    if @membership.update(membership_params)
+      redirect_back fallback_location: group_members_path(@group),
+                    notice: "Member updated."
     else
-      redirect_to group_manage_path(@group), alert: membership.errors.full_messages.to_sentence
+      redirect_back fallback_location: group_members_path(@group),
+                    alert: @membership.errors.full_messages.to_sentence
     end
-  end
-
-  def destroy
-    membership = @group.group_memberships.find(params[:id])
-
-    if membership.user_id == @group.owner_id
-      return redirect_to group_manage_path(@group), alert: "You can’t remove the group owner."
-    end
-
-    membership.destroy
-    redirect_to group_manage_path(@group), notice: "Member removed."
   end
 
   private
@@ -39,11 +25,17 @@ class GroupMembershipsController < ApplicationController
     @group = Group.find_by!(slug: params[:group_slug])
   end
 
-  def require_admin!
-    return if @group.owner_id == current_user.id
+  def set_membership
+    @membership = @group.memberships.find(params[:id])
+  end
 
-    membership = GroupMembership.find_by(group: @group, user: current_user)
-    allowed = membership&.role.to_s == "admin" && membership&.status.to_s == "active"
-    redirect_to group_path(@group), alert: "You don’t have permission to manage this group." unless allowed
+  def membership_params
+    params.require(:membership).permit(:role)
+  end
+
+  def can_manage_members?(group)
+    return true if current_user.admin?
+    return true if current_user.id == group.owner_id
+    group.memberships.exists?(user_id: current_user.id, role: "admin")
   end
 end

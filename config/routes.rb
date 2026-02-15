@@ -21,7 +21,7 @@ Rails.application.routes.draw do
 
     # Group management (edit name + members)
     resource :manage, only: [ :show ], controller: "group_management"
-    resources :memberships, only: [ :create, :destroy ], controller: "group_memberships"
+    resources :memberships, only: [ :create, :destroy, :update ], controller: "group_memberships"
   end
 
   # Accept an invite link (landing page)

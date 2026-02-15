@@ -98,18 +98,18 @@
               <% current_role = (m.respond_to?(:role) ? m.role.to_s : "") %>
               <% is_group_admin = (current_role == "admin") %>
 
+              <%# Your routes currently only include POST create + DELETE destroy for memberships.
+                    Until you add PATCH /groups/:group_slug/memberships/:id (group_memberships#update),
+                    these buttons cannot submit anywhere, so we render them disabled.
+                %>
               <% if is_group_admin %>
-              <%= button_to "Demote to Member",
-                                admin_group_membership_path(@group, m),
-                                method: :patch,
-                                params: { membership: { role: "member" } },
-                                class: "btn btn-sm btn-outline-secondary" %>
+              <button class="btn btn-sm btn-outline-secondary" disabled title="Enable memberships update route (PATCH) to change roles.">
+                Demote to Member
+              </button>
               <% else %>
-              <%= button_to "Promote to Group Admin",
-                                admin_group_membership_path(@group, m),
-                                method: :patch,
-                                params: { membership: { role: "admin" } },
-                                class: "btn btn-sm btn-outline-primary" %>
+              <button class="btn btn-sm btn-outline-primary" disabled title="Enable memberships update route (PATCH) to change roles.">
+                Promote to Group Admin
+              </button>
               <% end %>
 
               <%# ----- Site admin toggle (users.admin boolean) ----- %>
@@ -132,10 +132,10 @@
               <%# ----- Remove from group (don’t allow removing owner) ----- %>
               <% if u.id != @group.owner_id %>
               <%= button_to "Remove from Group",
-                                admin_group_membership_path(@group, m),
-                                method: :delete,
-                                data: { turbo_confirm: "Remove this member from the group?" },
-                                class: "btn btn-sm btn-outline-danger" %>
+      group_membership_path(@group, m),
+      method: :delete,
+      data: { turbo_confirm: "Remove this member from the group?" },
+      class: "btn btn-sm btn-outline-danger" %>
               <% else %>
               <span class="small text-muted align-self-center">Owner can’t be removed</span>
               <% end %>
