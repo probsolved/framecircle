@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_16_000406) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_16_170059) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -142,15 +142,15 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_16_000406) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "comments", "comments", column: "parent_id"
   add_foreign_key "comments", "submissions"
-  add_foreign_key "comments", "users"
+  add_foreign_key "comments", "users", on_delete: :cascade
   add_foreign_key "group_invitations", "groups"
-  add_foreign_key "group_invitations", "users", column: "invited_by_id"
+  add_foreign_key "group_invitations", "users", column: "invited_by_id", on_delete: :cascade
   add_foreign_key "group_memberships", "groups"
-  add_foreign_key "group_memberships", "users"
+  add_foreign_key "group_memberships", "users", on_delete: :cascade
   add_foreign_key "groups", "users", column: "owner_id"
-  add_foreign_key "submissions", "users"
+  add_foreign_key "submissions", "users", on_delete: :cascade
   add_foreign_key "submissions", "weeks"
   add_foreign_key "votes", "submissions"
-  add_foreign_key "votes", "users"
+  add_foreign_key "votes", "users", on_delete: :cascade
   add_foreign_key "weeks", "groups"
 end

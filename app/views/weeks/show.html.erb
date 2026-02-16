@@ -26,7 +26,7 @@
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-start">
             <div>
-              <div class="fw-semibold"><%= s.user.email %></div>
+              <div class="fw-semibold"><%= s.user.display_name_or_email %></div>
               <% if s.caption.present? %>
               <div class="text-muted small"><%= simple_format(s.caption) %></div>
               <% end %>
@@ -72,7 +72,7 @@
                   <div class="mb-2">
                     <% photo_comments.each do |c| %>
                     <div class="border rounded p-2 mb-2">
-                      <div class="small text-muted mb-1"><%= c.user.email %></div>
+                      <div class="small text-muted mb-1"><%= c.user.display_name_or_email %></div>
                       <div><%= simple_format(c.body) %></div>
                     </div>
                     <% end %>

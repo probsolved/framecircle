@@ -1,3 +1,5 @@
+<%# app/views/group_management/show.html.erb %>
+
 <div class="container py-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
@@ -18,9 +20,42 @@
   <% if flash[:notice].present? %>
   <div class="alert alert-success"><%= flash[:notice] %></div>
   <% end %>
+
   <% if flash[:alert].present? %>
   <div class="alert alert-warning"><%= flash[:alert] %></div>
   <% end %>
+
+  <% owner = @memberships.find { |mm| mm.user_id == @group.owner_id }&.user %>
+
+  <!-- GROUP OWNER -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h2 class="h5 mb-1">Group Owner</h2>
+      <div class="text-muted small mb-3">
+        Current owner:
+        <strong><%= owner&.respond_to?(:display_name_or_email) ? owner.display_name_or_email : (owner&.email || "Unknown") %></strong>
+      </div>
+
+      <div class="text-muted small mb-2">
+        Transfer ownership to an <strong>active</strong> member. This does not remove your membership.
+      </div>
+
+      <div class="d-flex flex-wrap gap-2">
+        <% @memberships.each do |m| %>
+        <% u = m.user %>
+        <% next if u.nil? %>
+        <% next if u.id == @group.owner_id %>
+        <% next unless m.respond_to?(:status) ? (m.status.to_s == "active") : true %>
+
+        <%= button_to "Make #{u.respond_to?(:display_name_or_email) ? u.display_name_or_email : u.email} Owner",
+                group_transfer_ownership_path(@group, user_id: u.id),
+                method: :patch,
+                data: { turbo_confirm: "Transfer ownership of this group to #{u.respond_to?(:display_name_or_email) ? u.display_name_or_email : u.email}? This action cannot be undone." },
+                class: "btn btn-sm btn-warning" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
 
   <!-- MEMBERS -->
   <div class="card mb-4">
@@ -33,25 +68,29 @@
         <% user = membership.user %>
 
         <div class="list-group-item d-flex justify-content-between align-items-center">
-          <div>
-            <div class="fw-semibold"><%= user.email %></div>
+          <div class="min-w-0">
+            <div class="fw-semibold text-truncate">
+              <%= user.respond_to?(:display_name_or_email) ? user.display_name_or_email : user.email %>
+            </div>
             <div class="text-muted small">
-              Role: <%= membership.respond_to?(:role) ? membership.role : "member" %>
+              Role: <%= membership.respond_to?(:role) && membership.role.present? ? membership.role : "member" %>
               <% if membership.respond_to?(:status) %>
               • Status: <%= membership.status %>
               <% end %>
             </div>
           </div>
 
-          <% if user.id == @group.owner_id %>
-          <span class="badge text-bg-secondary">Owner</span>
-          <% else %>
-          <%= button_to "Remove",
-                      group_membership_path(@group, membership),
-                      method: :delete,
-                      data: { turbo_confirm: "Remove this member from the group?" },
-                      class: "btn btn-sm btn-outline-danger" %>
-          <% end %>
+          <div class="d-flex align-items-center gap-2">
+            <% if user.id == @group.owner_id %>
+            <span class="badge text-bg-secondary">Owner</span>
+            <% else %>
+            <%= button_to "Remove",
+                        group_membership_path(@group, membership),
+                        method: :delete,
+                        data: { turbo_confirm: "Remove this member from the group?" },
+                        class: "btn btn-sm btn-outline-danger" %>
+            <% end %>
+          </div>
         </div>
         <% end %>
       </div>
@@ -72,7 +111,7 @@
         <div class="list-group-item">
           <div class="small text-muted">
             Created <%= time_ago_in_words(inv.created_at) %> ago
-            <% if inv.accepted? %>
+            <% if inv.respond_to?(:accepted?) && inv.accepted? %>
             • <strong>Accepted</strong>
             <% end %>
           </div>

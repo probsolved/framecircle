@@ -26,6 +26,24 @@ class Admin::UsersController < Admin::BaseController
     end
   end
 
+  def destroy
+  user = User.find(params[:id])
+
+  return redirect_to admin_users_path, alert: "You can’t delete your own account." if user == current_user
+
+  ActiveRecord::Base.transaction do
+    # Transfer any groups they own to the admin performing the deletion
+    Group.where(owner_id: user.id).update_all(owner_id: current_user.id)
+
+    # Everything else cascades automatically now
+    user.destroy!
+  end
+
+  redirect_to admin_users_path, notice: "User deleted. Any groups they owned were transferred to you."
+  rescue ActiveRecord::RecordNotDestroyed, ActiveRecord::InvalidForeignKey => e
+  redirect_to admin_users_path, alert: e.message
+  end
+
   def promote_to_admin
     user = User.find(params[:id])
     user.update!(admin: true)

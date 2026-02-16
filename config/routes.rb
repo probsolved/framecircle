@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   resources :groups, param: :slug do
     # Group member directory page
     resources :members, only: [ :index ], controller: "group_members"
+    patch "transfer_ownership/:user_id", to: "group_management#transfer_ownership", as: :transfer_ownership
 
     # Create invite links for a group
     resources :invitations, only: [ :create ]

@@ -24,7 +24,11 @@
           <% @users.each do |u| %>
           <tr>
             <td class="fw-semibold">
-              <%= link_to((u.respond_to?(:display_name) && u.display_name.present?) ? u.display_name : "User ##{u.id}", profile_path(u), class: "text-decoration-none") %>
+              <%= link_to(
+                      (u.respond_to?(:display_name) && u.display_name.present?) ? u.display_name : "User ##{u.id}",
+                      profile_path(u),
+                      class: "text-decoration-none"
+                    ) %>
             </td>
 
             <td class="text-muted"><%= u.email %></td>
@@ -38,29 +42,35 @@
             </td>
 
             <td class="text-end">
-              <% if u.respond_to?(:admin) %>
-              <% if u.admin %>
-              <%= button_to "Remove Admin",
-                          admin_user_path(u),
-                          method: :patch,
-                          params: { user: { admin: false } },
-                          class: "btn btn-sm btn-outline-danger" %>
-              <% else %>
-              <%= button_to "Make Admin",
-                          admin_user_path(u),
-                          method: :patch,
-                          params: { user: { admin: true } },
-                          class: "btn btn-sm btn-danger" %>
-              <% end %>
-              <% end %>
+              <div class="d-inline-flex gap-2">
 
-              <% if u != current_user %>
-              <%= button_to "Delete",
-                        admin_user_path(u),
-                        method: :delete,
-                        data: { turbo_confirm: "Delete this user? This cannot be undone." },
-                        class: "btn btn-sm btn-outline-secondary ms-2" %>
-              <% end %>
+                <%# Toggle site admin %>
+                <% if u.respond_to?(:admin) %>
+                <% if u.admin %>
+                <%= button_to "Remove Admin",
+                            admin_user_path(u),
+                            method: :patch,
+                            params: { user: { admin: false } },
+                            class: "btn btn-sm btn-outline-danger" %>
+                <% else %>
+                <%= button_to "Make Admin",
+                            admin_user_path(u),
+                            method: :patch,
+                            params: { user: { admin: true } },
+                            class: "btn btn-sm btn-danger" %>
+                <% end %>
+                <% end %>
+
+                <%# Delete (don't allow deleting yourself) %>
+                <% if u != current_user %>
+                <%= button_to "Delete",
+                          admin_user_path(u),
+                          method: :delete,
+                          data: { turbo_confirm: "Delete this user? This cannot be undone." },
+                          class: "btn btn-sm btn-outline-danger" %>
+                <% end %>
+
+              </div>
             </td>
           </tr>
           <% end %>
