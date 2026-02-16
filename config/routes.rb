@@ -29,9 +29,14 @@ Rails.application.routes.draw do
   resources :invitations, only: [ :show ]
 
   resources :submissions, only: [] do
-    resources :comments, only: [ :create ]
-    resource :vote, only: [ :create, :update, :destroy ]
+  resources :comments, only: [ :create ] do
+    resources :comment_kudos, only: [ :create ], path: "kudos"
+    delete "kudos/:kind", to: "comment_kudos#destroy", as: :kudo
   end
+
+  resource :vote, only: [ :create, :update, :destroy ]
+end
+
 
   resources :photos, only: [ :destroy ]
 

@@ -24,6 +24,7 @@
     <div class="col-12">
       <div class="card shadow-sm">
         <div class="card-body">
+
           <div class="d-flex justify-content-between align-items-start">
             <div>
               <div class="fw-semibold"><%= s.user.display_name_or_email %></div>
@@ -49,6 +50,7 @@
             <% s.photos.each_with_index do |photo, idx| %>
             <div class="col-12 col-md-4">
               <div class="card h-100">
+
                 <a href="#" data-photo-lightbox data-full-url="<%= url_for(photo) %>" class="d-block">
                   <%= image_tag url_for(photo), class: "img-fluid rounded-top" %>
                 </a>
@@ -66,14 +68,76 @@
                     <% end %>
                   </div>
 
-                  <% photo_comments = s.comments.select { |c| c.photo_index == idx && c.parent_id.nil? }.sort_by(&:created_at) %>
+                  <% photo_comments =
+                             s.comments
+                              .select { |c| c.photo_index == idx && c.parent_id.nil? }
+                              .sort_by(&:created_at) %>
 
                   <% if photo_comments.any? %>
                   <div class="mb-2">
                     <% photo_comments.each do |c| %>
                     <div class="border rounded p-2 mb-2">
-                      <div class="small text-muted mb-1"><%= c.user.display_name_or_email %></div>
+
+                      <div class="d-flex justify-content-between align-items-start">
+                        <div class="small text-muted mb-1">
+                          <%= c.user&.display_name_or_email || "Deleted user" %>
+                        </div>
+                        <div class="small text-muted">
+                          <%= time_ago_in_words(c.created_at) %> ago
+                        </div>
+                      </div>
+
                       <div><%= simple_format(c.body) %></div>
+
+                      <%# ---- CONSOLIDATED KUDOS ---- %>
+                      <% my_kudos = c.comment_kudos.select { |k| k.user_id == current_user.id }.map(&:kind) %>
+                      <% counts_by_kind = c.comment_kudos.group_by(&:kind).transform_values(&:size) %>
+
+                      <% helpful = counts_by_kind["helpful"] || 0 %>
+                      <% insightful = counts_by_kind["insightful"] || 0 %>
+                      <% encouraging = counts_by_kind["encouraging"] || 0 %>
+
+                      <div class="mt-2 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div class="small text-muted">
+                          Kudos:
+                          <span class="me-2">👍 <%= helpful %></span>
+                          <span class="me-2">🎯 <%= insightful %></span>
+                          <span>❤️ <%= encouraging %></span>
+                        </div>
+
+                        <% dropdown_id = "kudosDrop#{c.id}" %>
+                        <div class="dropdown">
+                          <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="<%= dropdown_id %>" data-bs-toggle="dropdown" aria-expanded="false">
+                            Kudos
+                          </button>
+
+                          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="<%= dropdown_id %>">
+                            <% [
+                                        ["helpful", "👍 Helpful"],
+                                        ["insightful", "🎯 Insightful"],
+                                        ["encouraging", "❤️ Encouraging"]
+                                      ].each do |kind, label| %>
+
+                            <% active = my_kudos.include?(kind) %>
+
+                            <li class="px-2 py-1">
+                              <% if active %>
+                              <%= button_to "✓ #{label} (remove)",
+                                                  submission_comment_kudo_path(s, c, kind: kind),
+                                                  method: :delete,
+                                                  class: "btn btn-sm btn-outline-danger w-100 text-start" %>
+                              <% else %>
+                              <%= button_to "#{label} (give)",
+                                                  submission_comment_comment_kudos_path(s, c),
+                                                  method: :post,
+                                                  params: { kind: kind },
+                                                  class: "btn btn-sm btn-outline-secondary w-100 text-start" %>
+                              <% end %>
+                            </li>
+                            <% end %>
+                          </ul>
+                        </div>
+                      </div>
                     </div>
                     <% end %>
                   </div>

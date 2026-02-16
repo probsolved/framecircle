@@ -13,6 +13,7 @@ class User < ApplicationRecord
            class_name: "Group",
            foreign_key: :owner_id,
            inverse_of: :owner
+  has_many :comment_kudos, dependent: :destroy
 
   # ============================
   # Validations
