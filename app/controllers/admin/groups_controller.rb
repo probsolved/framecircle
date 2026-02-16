@@ -1,27 +1,22 @@
-# app/controllers/admin/groups_controller.rb
-module Admin
-  class GroupsController < ApplicationController
-    before_action :authenticate_user!
-    before_action :require_admin!
+class Admin::GroupsController < ApplicationController
+  before_action :authenticate_user!
+  before_action :require_admin!
 
-    def index
-      @groups = Group
-        .includes(:owner, :group_memberships)
-        .order(created_at: :desc)
-    end
+  def index
+    @groups = Group.includes(:owner).order(created_at: :desc)
+  end
 
-    private
+  def destroy
+    group = Group.find(params[:id])
+    group.destroy!
+    redirect_to admin_groups_path, notice: "Group deleted."
+  rescue ActiveRecord::RecordNotDestroyed => e
+    redirect_to admin_groups_path, alert: e.message
+  end
 
-    def require_admin!
-      # TEMP: allow site owner by email
-      # Later we’ll replace this with a real admin role
-      allowed_admins = [
-        "paul@probsolved.dev" # change to your real email
-      ]
+  private
 
-      unless allowed_admins.include?(current_user.email)
-        redirect_to root_path, alert: "Not authorized"
-      end
-    end
+  def require_admin!
+    redirect_to root_path, alert: "Not authorized." unless current_user.admin?
   end
 end

@@ -3,10 +3,8 @@ Rails.application.routes.draw do
 
   root "groups#index"
 
-  resources :groups, only: [] do
-end
-
-get "/groups/discover", to: "groups#discover", as: :discover_groups
+  # Public group discovery
+  get "/groups/discover", to: "groups#discover", as: :discover_groups
 
   # Profile / account
   resource :account, only: [ :show, :edit, :update ], controller: "accounts"
@@ -15,7 +13,11 @@ get "/groups/discover", to: "groups#discover", as: :discover_groups
   resources :groups, param: :slug do
     # Group member directory page
     resources :members, only: [ :index ], controller: "group_members"
-    patch "transfer_ownership/:user_id", to: "group_management#transfer_ownership", as: :transfer_ownership
+
+    # Transfer ownership
+    patch "transfer_ownership/:user_id",
+          to: "group_management#transfer_ownership",
+          as: :transfer_ownership
 
     # Create invite links for a group
     resources :invitations, only: [ :create ]
@@ -27,27 +29,29 @@ get "/groups/discover", to: "groups#discover", as: :discover_groups
 
     # Group management (edit name + members)
     resource :manage, only: [ :show, :update ], controller: "group_management"
+
+    # Join / leave / role changes
     resources :memberships, only: [ :create, :destroy, :update ], controller: "group_memberships"
   end
 
   # Accept an invite link (landing page)
   resources :invitations, only: [ :show ]
 
+  # Comments + kudos + voting
   resources :submissions, only: [] do
-  resources :comments, only: [ :create ] do
-    resources :comment_kudos, only: [ :create ], path: "kudos"
-    delete "kudos/:kind", to: "comment_kudos#destroy", as: :kudo
+    resources :comments, only: [ :create ] do
+      resources :comment_kudos, only: [ :create ], path: "kudos"
+      delete "kudos/:kind", to: "comment_kudos#destroy", as: :kudo
+    end
+
+    resource :vote, only: [ :create, :update, :destroy ]
   end
-
-  resource :vote, only: [ :create, :update, :destroy ]
-end
-
 
   resources :photos, only: [ :destroy ]
 
   namespace :admin do
-    resources :groups, only: [ :index ]
-    resources :users, only: [ :index, :show, :edit, :update, :destroy ]
+    resources :groups, only: [ :index, :destroy ]
+    resources :users,  only: [ :index, :show, :edit, :update, :destroy ]
   end
 
   resource :terms_acceptance, only: [ :show, :update ]

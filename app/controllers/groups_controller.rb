@@ -50,8 +50,16 @@ class GroupsController < ApplicationController
   end
 
   def destroy
-    @group.destroy
-    redirect_to groups_path, notice: "Group deleted."
+  @group = Group.find_by!(slug: params[:slug])
+
+  unless current_user.admin? || current_user.id == @group.owner_id
+    return redirect_to group_path(@group), alert: "Not authorized."
+  end
+
+  @group.destroy!
+  redirect_to groups_path, notice: "Group deleted."
+  rescue ActiveRecord::RecordNotDestroyed => e
+  redirect_to group_path(@group), alert: e.message
   end
 
   def manage

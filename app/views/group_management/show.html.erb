@@ -1,5 +1,3 @@
-<%# app/views/group_management/show.html.erb %>
-
 <div class="container py-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
@@ -8,7 +6,7 @@
     </div>
 
     <div class="d-flex gap-2">
-      <%= link_to "Back to Group", group_path(@group), class: "btn btn-outline-secondary" %>
+      <%= link_to "Back", group_path(@group), class: "btn btn-outline-secondary" %>
 
       <%= button_to "Create Invite Link",
             group_invitations_path(group_slug: @group.slug),
@@ -20,71 +18,9 @@
   <% if flash[:notice].present? %>
   <div class="alert alert-success"><%= flash[:notice] %></div>
   <% end %>
-
   <% if flash[:alert].present? %>
   <div class="alert alert-warning"><%= flash[:alert] %></div>
   <% end %>
-
-  <% owner = @memberships.find { |mm| mm.user_id == @group.owner_id }&.user %>
-
-  <!-- GROUP OWNER -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h2 class="h5 mb-1">Group Owner</h2>
-      <div class="text-muted small mb-3">
-        Current owner:
-        <strong><%= owner&.respond_to?(:display_name_or_email) ? owner.display_name_or_email : (owner&.email || "Unknown") %></strong>
-      </div>
-
-      <div class="text-muted small mb-2">
-        Transfer ownership to an <strong>active</strong> member. This does not remove your membership.
-      </div>
-
-      <div class="d-flex flex-wrap gap-2">
-        <% @memberships.each do |m| %>
-        <% u = m.user %>
-        <% next if u.nil? %>
-        <% next if u.id == @group.owner_id %>
-        <% next unless m.respond_to?(:status) ? (m.status.to_s == "active") : true %>
-
-        <%= button_to "Make #{u.respond_to?(:display_name_or_email) ? u.display_name_or_email : u.email} Owner",
-                group_transfer_ownership_path(@group, user_id: u.id),
-                method: :patch,
-                data: { turbo_confirm: "Transfer ownership of this group to #{u.respond_to?(:display_name_or_email) ? u.display_name_or_email : u.email}? This action cannot be undone." },
-                class: "btn btn-sm btn-warning" %>
-        <% end %>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- VISIBILITY -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h2 class="h5 mb-2">Group Visibility</h2>
-
-      <%= form_with model: @group,
-                  url: group_manage_path(@group),
-                  method: :patch,
-                  local: true do |f| %>
-
-      <div class="form-check mb-2">
-        <%= f.check_box :public, class: "form-check-input" %>
-        <%= f.label :public,
-              "Make this group public (discoverable by other users)",
-              class: "form-check-label" %>
-      </div>
-
-      <div class="form-text mb-3">
-        Public groups appear on the Discover Groups page and can be joined by anyone.
-      </div>
-
-      <%= f.submit "Save Visibility",
-            class: "btn btn-sm btn-primary" %>
-      <% end %>
-    </div>
-  </div>
-
 
   <!-- MEMBERS -->
   <div class="card mb-4">
@@ -97,29 +33,25 @@
         <% user = membership.user %>
 
         <div class="list-group-item d-flex justify-content-between align-items-center">
-          <div class="min-w-0">
-            <div class="fw-semibold text-truncate">
-              <%= user.respond_to?(:display_name_or_email) ? user.display_name_or_email : user.email %>
-            </div>
+          <div>
+            <div class="fw-semibold"><%= user&.display_name_or_email || user&.email || "Deleted user" %></div>
             <div class="text-muted small">
-              Role: <%= membership.respond_to?(:role) && membership.role.present? ? membership.role : "member" %>
+              Role: <%= membership.respond_to?(:role) ? membership.role : "member" %>
               <% if membership.respond_to?(:status) %>
               • Status: <%= membership.status %>
               <% end %>
             </div>
           </div>
 
-          <div class="d-flex align-items-center gap-2">
-            <% if user.id == @group.owner_id %>
-            <span class="badge text-bg-secondary">Owner</span>
-            <% else %>
-            <%= button_to "Remove",
-                        group_membership_path(@group, membership),
-                        method: :delete,
-                        data: { turbo_confirm: "Remove this member from the group?" },
-                        class: "btn btn-sm btn-outline-danger" %>
-            <% end %>
-          </div>
+          <% if user && user.id != @group.owner_id %>
+          <%= button_to "Remove",
+                      group_membership_path(@group, membership),
+                      method: :delete,
+                      data: { turbo_confirm: "Remove this member from the group?" },
+                      class: "btn btn-sm btn-outline-danger" %>
+          <% else %>
+          <span class="badge text-bg-secondary">Owner</span>
+          <% end %>
         </div>
         <% end %>
       </div>
@@ -129,20 +61,22 @@
     </div>
   </div>
 
-  <!-- INVITE LINKS -->
-  <div class="card">
+  <!-- INVITES -->
+  <div class="card mb-4">
     <div class="card-body">
       <h2 class="h5 mb-3">Invite Links</h2>
 
-      <% if @invitations.any? %>
+      <% if defined?(@invitations) && @invitations.any? %>
       <div class="list-group">
         <% @invitations.each do |inv| %>
         <div class="list-group-item">
-          <div class="small text-muted">
-            Created <%= time_ago_in_words(inv.created_at) %> ago
-            <% if inv.respond_to?(:accepted?) && inv.accepted? %>
-            • <strong>Accepted</strong>
-            <% end %>
+          <div class="d-flex justify-content-between">
+            <div class="small text-muted">
+              Created <%= time_ago_in_words(inv.created_at) %> ago
+              <% if inv.respond_to?(:accepted_at) && inv.accepted_at.present? %>
+              • <strong>Accepted</strong>
+              <% end %>
+            </div>
           </div>
 
           <div class="mt-2">
@@ -156,4 +90,23 @@
       <% end %>
     </div>
   </div>
+
+  <!-- DANGER ZONE -->
+  <% can_delete_group = (user_signed_in? && (current_user.admin? || current_user.id == @group.owner_id)) %>
+  <% if can_delete_group %>
+  <div class="card border-danger">
+    <div class="card-body">
+      <h2 class="h5 text-danger mb-2">Danger Zone</h2>
+      <div class="text-muted small mb-3">
+        Deleting a group permanently removes the group and all associated data (weeks, submissions, comments, votes, memberships, and invites).
+      </div>
+
+      <%= button_to "Delete Group",
+              group_path(@group),
+              method: :delete,
+              data: { turbo_confirm: "Delete #{@group.name}? This cannot be undone." },
+              class: "btn btn-danger" %>
+    </div>
+  </div>
+  <% end %>
 </div>
