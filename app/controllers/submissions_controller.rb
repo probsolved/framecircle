@@ -72,6 +72,6 @@ class SubmissionsController < ApplicationController
   end
 
   def submission_params
-    params.require(:submission).permit(:caption, photos: [])
+    params.require(:submission).permit(:caption, photos: [], feedback_focus: [])
   end
 end

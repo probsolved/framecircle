@@ -1,3 +1,5 @@
+<%# app/views/submissions/show.html.erb (or wherever your "Your Submission" view lives) %>
+
 <div class="container py-4" style="max-width: 900px;">
   <div class="d-flex justify-content-between align-items-start mb-3">
     <div>
@@ -54,6 +56,39 @@
                 placeholder: "Optional notes, EXIF, or thoughts…" %>
       </div>
 
+      <!-- Feedback Focus (NEW) -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">What kind of feedback do you want?</label>
+
+        <%# ensures unchecked = empty array %>
+        <%= hidden_field_tag "submission[feedback_focus][]", "" %>
+
+        <div class="d-flex flex-wrap gap-3">
+          <% labels = {
+              "composition" => "Composition",
+              "lighting"    => "Lighting",
+              "color"       => "Color",
+              "story"       => "Story / Mood",
+              "editing"     => "Editing / Post"
+            } %>
+
+          <% labels.each do |key, label| %>
+          <div class="form-check">
+            <%= check_box_tag "submission[feedback_focus][]",
+                      key,
+                      Array(@submission.feedback_focus).include?(key),
+                      id: "submission_feedback_focus_#{key}",
+                      class: "form-check-input" %>
+            <%= label_tag "submission_feedback_focus_#{key}", label, class: "form-check-label" %>
+          </div>
+          <% end %>
+        </div>
+
+        <div class="form-text">
+          Optional — helps others tailor critiques to what you’re working on.
+        </div>
+      </div>
+
       <%= f.submit (@submission.persisted? ? "Update Submission" : "Save Submission"),
               class: "btn btn-primary" %>
 
@@ -67,7 +102,7 @@
         <div class="col-12 col-md-4">
           <div class="card h-100">
             <a href="#" data-photo-lightbox data-full-url="<%= url_for(photo) %>" class="d-block">
-              <%= image_tag photo, class: "img-fluid rounded-top" %>
+              <%= image_tag url_for(photo), class: "img-fluid rounded-top" %>
             </a>
 
             <div class="card-body py-2">

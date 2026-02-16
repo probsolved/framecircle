@@ -31,6 +31,29 @@
               <% if s.caption.present? %>
               <div class="text-muted small"><%= simple_format(s.caption) %></div>
               <% end %>
+              <% if s.feedback_focus.present? %>
+              <div class="mt-2">
+                <span class="small text-muted me-2 fw-semibold">
+                  Wants feedback on:
+                </span>
+
+                <% labels = {
+      "composition" => "Composition",
+      "lighting"    => "Lighting",
+      "color"       => "Color",
+      "story"       => "Story / Mood",
+      "editing"     => "Editing / Post"
+    } %>
+
+                <% s.feedback_focus.each do |key| %>
+                <% next if key.blank? %>
+                <span class="badge text-bg-light border me-1">
+                  <%= labels[key] || key.to_s.humanize %>
+                </span>
+                <% end %>
+              </div>
+              <% end %>
+
             </div>
 
             <% counts = s.votes.group(:photo_index).count %>
