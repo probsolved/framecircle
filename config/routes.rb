@@ -38,4 +38,6 @@ Rails.application.routes.draw do
     resources :groups, only: [ :index ]
     resources :users, only: [ :index, :show, :edit, :update, :destroy ]
   end
+
+  resource :terms_acceptance, only: [ :show, :update ]
 end

@@ -7,7 +7,7 @@
         <div>
           <div class="h4 mb-0 fw-semibold">Mini-Groups</div>
           <div class="text-white-50 small">
-            Have an invitation link already? Create an account then 
+            Have an invitation link already? Create an account then
             <%= link_to "Sign in", new_session_path(resource_name), class: "link-info text-decoration-none" %>
             before using the link!
           </div>
@@ -74,6 +74,20 @@
         <%= f.password_field :password_confirmation, autocomplete: "new-password",
                 class: "form-control form-control-lg bg-dark text-white border-secondary",
                 placeholder: "••••••••" %>
+      </div>
+
+      <div class="mt-4">
+        <%= render "shared/family_friendly_terms" %>
+      </div>
+
+      <div class="form-check mt-3">
+        <%= f.check_box :family_friendly_terms,
+        class: "form-check-input",
+        required: true %>
+
+        <%= f.label :family_friendly_terms,
+        "I have read and agree to the Family-Friendly Terms",
+        class: "form-check-label" %>
       </div>
 
       <div class="d-grid gap-2">

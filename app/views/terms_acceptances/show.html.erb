@@ -1,0 +1,26 @@
+<div class="container py-5" style="max-width: 720px;">
+  <h1 class="h4 mb-3">Family-Friendly Terms</h1>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <p class="mb-3">
+        FrameCircle is a family-friendly community. By continuing, you agree to:
+      </p>
+
+      <ul class="mb-4">
+        <li>No explicit/sexual content or nudity.</li>
+        <li>No harassment, hate, or bullying.</li>
+        <li>Keep critique constructive and respectful.</li>
+      </ul>
+
+      <%= form_with url: terms_acceptance_path, method: :put, local: true do %>
+      <div class="form-check mb-3">
+        <%= check_box_tag :family_friendly_terms, "1", false, class: "form-check-input", required: true %>
+        <%= label_tag :family_friendly_terms, "I agree to the Family-Friendly Terms", class: "form-check-label" %>
+      </div>
+
+      <%= submit_tag "Continue", class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+</div>
