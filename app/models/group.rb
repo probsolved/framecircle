@@ -18,6 +18,12 @@ end
 
   before_validation :ensure_slug
 
+  scope :publicly_visible, -> { where(public: true) }
+
+  def member_count
+    group_memberships.where(status: "active").count
+  end
+
   private
 
   def ensure_slug

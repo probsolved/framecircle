@@ -24,8 +24,17 @@
         <tbody>
           <% @groups.each do |group| %>
           <tr>
+            <!-- Name + visibility pill -->
             <td class="fw-semibold">
-              <%= group.name %>
+              <div class="d-flex align-items-center gap-2">
+                <span><%= group.name %></span>
+
+                <% if group.public? %>
+                <span class="badge rounded-pill text-bg-success">Public</span>
+                <% else %>
+                <span class="badge rounded-pill text-bg-secondary">Private</span>
+                <% end %>
+              </div>
             </td>
 
             <td class="text-muted small">
@@ -35,7 +44,7 @@
             <td>
               <% if group.owner %>
               <%= link_to(
-                        group.owner.email,
+                        group.owner.display_name_or_email,
                         profile_path(group.owner),
                         class: "text-decoration-none"
                       ) %>

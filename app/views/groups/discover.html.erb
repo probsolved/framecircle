@@ -1,0 +1,59 @@
+<div class="container py-4">
+  <div class="mb-4">
+    <h1 class="h4 mb-1">Discover Groups</h1>
+    <p class="text-muted">
+      Explore public photography circles and join the conversation.
+    </p>
+  </div>
+
+  <% if (@groups || []).any? %>
+  <div class="row g-3">
+    <% @groups.each do |group| %>
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body d-flex flex-column">
+
+          <h2 class="h6 mb-1">
+            <%= link_to group.name, group_path(group), class: "text-decoration-none" %>
+          </h2>
+
+          <% if group.respond_to?(:description) && group.description.present? %>
+          <p class="text-muted small mb-2">
+            <%= truncate(group.description, length: 120) %>
+          </p>
+          <% end %>
+
+          <div class="small text-muted mb-3">
+            👥 <%= group.member_count %> members
+          </div>
+
+          <div class="mt-auto">
+            <% if user_signed_in? %>
+            <% membership = group.group_memberships.find_by(user: current_user) %>
+
+            <% if membership&.status == "active" %>
+            <span class="badge text-bg-success">Joined</span>
+            <% else %>
+            <%= button_to "Join Group",
+                          group_memberships_path(group),
+                          method: :post,
+                          class: "btn btn-sm btn-outline-primary w-100" %>
+            <% end %>
+            <% else %>
+            <%= link_to "Sign in to join",
+                        new_user_session_path,
+                        class: "btn btn-sm btn-outline-secondary w-100" %>
+            <% end %>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <% end %>
+  </div>
+  <% else %>
+  <div class="alert alert-info">
+    No public groups yet.
+  </div>
+  <% end %>
+</div>

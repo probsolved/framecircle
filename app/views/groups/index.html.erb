@@ -15,7 +15,17 @@
   <div class="col-12 col-md-6 col-lg-4">
     <div class="card glass-card h-100 p-3 d-flex flex-column justify-content-between">
       <div>
-        <h5 class="group-title mb-1"><%= group.name %></h5>
+        <!-- Group name + visibility pill -->
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <h5 class="group-title mb-0"><%= group.name %></h5>
+
+          <% if group.public? %>
+          <span class="badge rounded-pill text-bg-success">Public</span>
+          <% else %>
+          <span class="badge rounded-pill text-bg-secondary">Private</span>
+          <% end %>
+        </div>
+
         <div class="small text-muted">
           <%= pluralize(group.members.count, "member") %>
         </div>

@@ -63,7 +63,13 @@ class GroupsController < ApplicationController
     .order(:created_at)
   end
 
+  def discover
+  @groups = Group.where(public: true).order(created_at: :desc)
+  end
+
   private
+
+
 
   def set_group
     @group = Group.find_by!(slug: params[:slug])

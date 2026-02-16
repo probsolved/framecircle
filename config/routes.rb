@@ -3,6 +3,11 @@ Rails.application.routes.draw do
 
   root "groups#index"
 
+  resources :groups, only: [] do
+end
+
+get "/groups/discover", to: "groups#discover", as: :discover_groups
+
   # Profile / account
   resource :account, only: [ :show, :edit, :update ], controller: "accounts"
   get "/u/:id", to: "profiles#show", as: :profile
@@ -21,7 +26,7 @@ Rails.application.routes.draw do
     end
 
     # Group management (edit name + members)
-    resource :manage, only: [ :show ], controller: "group_management"
+    resource :manage, only: [ :show, :update ], controller: "group_management"
     resources :memberships, only: [ :create, :destroy, :update ], controller: "group_memberships"
   end
 

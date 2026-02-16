@@ -57,6 +57,35 @@
     </div>
   </div>
 
+
+  <!-- VISIBILITY -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h2 class="h5 mb-2">Group Visibility</h2>
+
+      <%= form_with model: @group,
+                  url: group_manage_path(@group),
+                  method: :patch,
+                  local: true do |f| %>
+
+      <div class="form-check mb-2">
+        <%= f.check_box :public, class: "form-check-input" %>
+        <%= f.label :public,
+              "Make this group public (discoverable by other users)",
+              class: "form-check-label" %>
+      </div>
+
+      <div class="form-text mb-3">
+        Public groups appear on the Discover Groups page and can be joined by anyone.
+      </div>
+
+      <%= f.submit "Save Visibility",
+            class: "btn btn-sm btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+
+
   <!-- MEMBERS -->
   <div class="card mb-4">
     <div class="card-body">
