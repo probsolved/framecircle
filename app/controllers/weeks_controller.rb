@@ -1,53 +1,49 @@
 class WeeksController < ApplicationController
   before_action :authenticate_user!
   before_action :set_group
+  before_action :require_member!
+  before_action :set_week, only: [ :show ]
 
   def show
-  @week = @group.weeks.find(params[:id])
-
-  @submissions = @week.submissions
-    .includes(:user, :votes, :comments, photos_attachments: :blob)
-    .order(created_at: :asc)
+    @submissions = @week.submissions.includes(:user, :votes, comments: [ :user, :comment_kudos ])
   end
-
 
   def create
-  today  = Date.current
-  start  = today.beginning_of_week(:monday)
-  ending = today.end_of_week(:sunday)
+    # If your Week is created from some form params, keep your existing fields.
+    @week = @group.weeks.new(week_params)
 
-  title = params.dig(:week, :title).presence || "Week of #{start.strftime("%b %-d, %Y")}"
-
-  # If this week already exists for the group, reuse it
-  existing = @group.weeks.find_by(starts_on: start, ends_on: ending)
-
-  if existing.present?
-    # Optional: if you want to allow title edits when user enters one
-    if params.dig(:week, :title).present? && existing.title != title
-      existing.update(title: title)
+    if @week.save
+      redirect_to group_week_path(@group, @week), notice: "Week created."
+    else
+      redirect_back fallback_location: group_path(@group),
+                    alert: @week.errors.full_messages.to_sentence
     end
-
-    return redirect_to group_week_path(@group, existing), notice: "Week already exists — opened it."
   end
-
-  @week = @group.weeks.new(
-    title: title,
-    starts_on: start,
-    ends_on: ending,
-    status: :open
-  )
-
-  if @week.save
-    redirect_to group_week_path(@group, @week), notice: "Week created."
-  else
-    redirect_to group_path(@group), alert: @week.errors.full_messages.to_sentence
-  end
-  end
-
 
   private
 
   def set_group
     @group = Group.find_by!(slug: params[:group_slug])
+  end
+
+  def set_week
+    @week = @group.weeks.find(params[:id])
+  end
+
+  # ✅ THIS is the key change
+  def require_member!
+    return if current_user.admin?
+    return if @group.owner_id == current_user.id
+
+    membership = @group.group_memberships.find_by(user_id: current_user.id)
+    is_active_member = membership.present? && membership.status.to_s == "active"
+
+    redirect_to group_path(@group), alert: "You must be a member of this group." unless is_active_member
+  end
+
+  def week_params
+    # Keep whatever you already allow.
+    # If you create weeks automatically (no fields), you can just return {}.
+    params.fetch(:week, {}).permit(:title, :starts_on, :ends_on)
   end
 end

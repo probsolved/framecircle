@@ -15,6 +15,7 @@ end
 
   validates :name, presence: true
   validates :slug, presence: true, uniqueness: true
+  validates :public, inclusion: { in: [ true, false ], message: "must be selected" }
 
   before_validation :ensure_slug
 

@@ -15,10 +15,22 @@
     </div>
   </div>
 
-  <% membership = GroupMembership.find_by(group: @group, user: current_user) %>
+  <% membership = @group.group_memberships.find_by(user_id: current_user.id) %>
   <% is_admin = @group.owner_id == current_user.id || membership&.role.to_s == "admin" %>
+  <% is_member = membership.present? && membership.status.to_s == "active" %>
 
   <div class="d-flex gap-2">
+
+
+    <% if membership.present? && current_user.id != @group.owner_id %>
+    <%= button_to "Leave Group",
+            group_membership_path(@group, membership),
+            method: :delete,
+            data: { turbo_confirm: "Leave #{@group.name}? You can re-join later if it's public." },
+            class: "btn btn-outline-danger" %>
+    <% elsif current_user.id == @group.owner_id %>
+    <span class="text-muted small">Owner can’t leave (transfer ownership first)</span>
+    <% end %>
     <% if is_admin %>
     <%= link_to "Manage Group",
             group_manage_path(@group),
@@ -34,7 +46,8 @@
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="h6 mb-0">Weeks</h2>
 
-    <% if is_admin %>
+    <%# ✅ any active member (including owner/admin) can create a week %>
+    <% if current_user.admin? || @group.owner_id == current_user.id || is_member %>
     <%= button_to "Create Week",
             group_weeks_path(@group),
             method: :post,
