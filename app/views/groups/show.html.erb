@@ -48,10 +48,34 @@
 
     <%# ✅ any active member (including owner/admin) can create a week %>
     <% if current_user.admin? || @group.owner_id == current_user.id || is_member %>
-    <%= button_to "Create Week",
-            group_weeks_path(@group),
-            method: :post,
-            class: "btn btn-sm btn-primary" %>
+    <% if current_user.admin? || @group.owner_id == current_user.id || is_member %>
+    <%= form_with model: [@group, @group.weeks.new],
+                url: group_weeks_path(@group),
+                method: :post,
+                local: true,
+                class: "d-flex gap-2 flex-wrap align-items-end" do |f| %>
+
+    <div>
+      <%= f.label :title, class: "form-label small mb-1" %>
+      <%= f.text_field :title, class: "form-control form-control-sm", placeholder: "Week title", required: true %>
+    </div>
+
+    <div>
+      <%= f.label :starts_on, "Starts", class: "form-label small mb-1" %>
+      <%= f.date_field :starts_on, class: "form-control form-control-sm", required: true %>
+    </div>
+
+    <div>
+      <%= f.label :ends_on, "Ends", class: "form-label small mb-1" %>
+      <%= f.date_field :ends_on, class: "form-control form-control-sm", required: true %>
+    </div>
+
+    <div>
+      <%= f.submit "Create Week", class: "btn btn-sm btn-primary" %>
+    </div>
+    <% end %>
+    <% end %>
+
     <% end %>
   </div>
 
