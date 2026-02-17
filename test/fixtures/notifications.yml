@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  recipient: one
+  actor: one
+  group: one
+  week: one
+  submission: one
+  comment: one
+  kind: MyString
+  read_at: 2026-02-16 15:50:44
+
+two:
+  recipient: two
+  actor: two
+  group: two
+  week: two
+  submission: two
+  comment: two
+  kind: MyString
+  read_at: 2026-02-16 15:50:44

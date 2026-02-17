@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_16_204703) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_16_215044) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -84,7 +84,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_16_204703) do
     t.integer "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "last_viewed_at"
     t.index ["group_id"], name: "index_group_memberships_on_group_id"
+    t.index ["last_viewed_at"], name: "index_group_memberships_on_last_viewed_at"
     t.index ["user_id"], name: "index_group_memberships_on_user_id"
   end
 
@@ -96,8 +98,29 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_16_204703) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "public"
+    t.datetime "last_activity_at"
+    t.index ["last_activity_at"], name: "index_groups_on_last_activity_at"
     t.index ["owner_id"], name: "index_groups_on_owner_id"
     t.index ["public"], name: "index_groups_on_public"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "recipient_id", null: false
+    t.bigint "actor_id", null: false
+    t.bigint "group_id", null: false
+    t.bigint "week_id", null: false
+    t.bigint "submission_id", null: false
+    t.bigint "comment_id", null: false
+    t.string "kind"
+    t.datetime "read_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["actor_id"], name: "index_notifications_on_actor_id"
+    t.index ["comment_id"], name: "index_notifications_on_comment_id"
+    t.index ["group_id"], name: "index_notifications_on_group_id"
+    t.index ["recipient_id"], name: "index_notifications_on_recipient_id"
+    t.index ["submission_id"], name: "index_notifications_on_submission_id"
+    t.index ["week_id"], name: "index_notifications_on_week_id"
   end
 
   create_table "submissions", force: :cascade do |t|
@@ -163,6 +186,12 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_16_204703) do
   add_foreign_key "group_memberships", "groups"
   add_foreign_key "group_memberships", "users", on_delete: :cascade
   add_foreign_key "groups", "users", column: "owner_id"
+  add_foreign_key "notifications", "comments"
+  add_foreign_key "notifications", "groups"
+  add_foreign_key "notifications", "submissions"
+  add_foreign_key "notifications", "users", column: "actor_id"
+  add_foreign_key "notifications", "users", column: "recipient_id"
+  add_foreign_key "notifications", "weeks"
   add_foreign_key "submissions", "users", on_delete: :cascade
   add_foreign_key "submissions", "weeks"
   add_foreign_key "votes", "submissions"

@@ -6,6 +6,11 @@ class WeeksController < ApplicationController
 
   def show
     @submissions = @week.submissions.includes(:user, :votes, comments: [ :user, :comment_kudos ])
+    @unread_by_submission_id =
+    Notification.unread
+                .where(recipient: current_user, week: @week)
+                .group(:submission_id)
+                .count
   end
 
   def create

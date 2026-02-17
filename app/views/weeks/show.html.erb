@@ -14,6 +14,8 @@
     </div>
   </div>
 
+  <% unread_map = (@unread_by_submission_id || {}) %>
+
   <% if @submissions.blank? %>
   <div class="alert alert-info">
     No submissions yet. Click <strong>Your Submission</strong> to upload up to 3 photos.
@@ -27,10 +29,19 @@
 
           <div class="d-flex justify-content-between align-items-start">
             <div>
-              <div class="fw-semibold"><%= s.user.display_name_or_email %></div>
+              <div class="d-flex align-items-center gap-2 flex-wrap">
+                <div class="fw-semibold"><%= s.user.display_name_or_email %></div>
+
+                <% unread = (unread_map[s.id] || 0) %>
+                <% if unread.positive? %>
+                <span class="badge rounded-pill text-bg-warning">New (<%= unread %>)</span>
+                <% end %>
+              </div>
+
               <% if s.caption.present? %>
               <div class="text-muted small"><%= simple_format(s.caption) %></div>
               <% end %>
+
               <% if s.feedback_focus.present? %>
               <div class="mt-2">
                 <span class="small text-muted me-2 fw-semibold">
@@ -38,12 +49,12 @@
                 </span>
 
                 <% labels = {
-      "composition" => "Composition",
-      "lighting"    => "Lighting",
-      "color"       => "Color",
-      "story"       => "Story / Mood",
-      "editing"     => "Editing / Post"
-    } %>
+                        "composition" => "Composition",
+                        "lighting"    => "Lighting",
+                        "color"       => "Color",
+                        "story"       => "Story / Mood",
+                        "editing"     => "Editing / Post"
+                      } %>
 
                 <% s.feedback_focus.each do |key| %>
                 <% next if key.blank? %>
@@ -53,7 +64,6 @@
                 <% end %>
               </div>
               <% end %>
-
             </div>
 
             <% counts = s.votes.group(:photo_index).count %>
