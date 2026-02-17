@@ -80,13 +80,18 @@ config.action_mailer.default_url_options = {
 config.action_mailer.delivery_method = :smtp
 config.action_mailer.smtp_settings = {
   address: ENV.fetch("SMTP_ADDRESS"),
-  port: 465,
+  port: ENV.fetch("SMTP_PORT", 465),
   domain: ENV.fetch("APP_HOST"),
   user_name: ENV.fetch("SMTP_USERNAME"),
   password: ENV.fetch("SMTP_PASSWORD"),
   authentication: :login,
+
   ssl: true,
   enable_starttls_auto: false,
+
+  # ⚠️ Accept self-signed certs (encrypted, but not authenticated)
+  openssl_verify_mode: "none",
+
   open_timeout: 10,
   read_timeout: 10
 }
