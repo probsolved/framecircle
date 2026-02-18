@@ -62,25 +62,33 @@
   </div>
 
   <!-- INVITES -->
-  <div class="card mb-4">
+  <div class="card">
     <div class="card-body">
       <h2 class="h5 mb-3">Invite Links</h2>
 
-      <% if defined?(@invitations) && @invitations.any? %>
+      <% if @invitations.present? %>
       <div class="list-group">
         <% @invitations.each do |inv| %>
+        <% url = invitation_url(inv) %>
+
         <div class="list-group-item">
-          <div class="d-flex justify-content-between">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
             <div class="small text-muted">
               Created <%= time_ago_in_words(inv.created_at) %> ago
               <% if inv.respond_to?(:accepted_at) && inv.accepted_at.present? %>
-              • <strong>Accepted</strong>
+              • <span class="badge text-bg-success">Accepted</span>
               <% end %>
+            </div>
+
+            <div class="small text-muted">
+              ID: <%= inv.id %>
             </div>
           </div>
 
           <div class="mt-2">
-            <code><%= invitation_url(inv) %></code>
+            <code class="d-block">
+              <%= link_to url, url, target: "_blank", rel: "noopener" %>
+            </code>
           </div>
         </div>
         <% end %>
@@ -91,22 +99,24 @@
     </div>
   </div>
 
-  <!-- DANGER ZONE -->
-  <% can_delete_group = (user_signed_in? && (current_user.admin? || current_user.id == @group.owner_id)) %>
-  <% if can_delete_group %>
-  <div class="card border-danger">
-    <div class="card-body">
-      <h2 class="h5 text-danger mb-2">Danger Zone</h2>
-      <div class="text-muted small mb-3">
-        Deleting a group permanently removes the group and all associated data (weeks, submissions, comments, votes, memberships, and invites).
-      </div>
+</div>
 
-      <%= button_to "Delete Group",
+<!-- DANGER ZONE -->
+<% can_delete_group = (user_signed_in? && (current_user.admin? || current_user.id == @group.owner_id)) %>
+<% if can_delete_group %>
+<div class="card border-danger">
+  <div class="card-body">
+    <h2 class="h5 text-danger mb-2">Danger Zone</h2>
+    <div class="text-muted small mb-3">
+      Deleting a group permanently removes the group and all associated data (weeks, submissions, comments, votes, memberships, and invites).
+    </div>
+
+    <%= button_to "Delete Group",
               group_path(@group),
               method: :delete,
               data: { turbo_confirm: "Delete #{@group.name}? This cannot be undone." },
               class: "btn btn-danger" %>
-    </div>
   </div>
-  <% end %>
+</div>
+<% end %>
 </div>

@@ -4,9 +4,12 @@ class GroupManagementController < ApplicationController
   before_action :require_admin!
 
   def show
-    @memberships = @group.group_memberships.includes(:user).order(:created_at)
-    @new_member = GroupMembership.new
-    @invitations = @group.group_invitations.order(created_at: :desc)
+  @group = Group.find_by!(slug: params[:group_slug])
+
+  @memberships = @group.group_memberships.includes(:user).order(:id)
+
+  # ✅ THIS is the important line:
+  @invitations = GroupInvitation.where(group: @group).order(created_at: :desc)
   end
 
   def update

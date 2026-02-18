@@ -2,16 +2,15 @@ class GroupInvitation < ApplicationRecord
   belongs_to :group
   belongs_to :invited_by, class_name: "User", optional: true
 
+  has_secure_token :token
+
   validates :token, presence: true, uniqueness: true
-  before_validation :ensure_token
 
   def accepted?
     accepted_at.present?
   end
 
-  private
-
-  def ensure_token
-    self.token ||= SecureRandom.urlsafe_base64(24)
+  def to_param
+    token
   end
 end

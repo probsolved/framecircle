@@ -80,7 +80,8 @@
           </div>
 
           <div class="mt-2">
-            <code><%= invitation_url(inv) %></code>
+            <% url = invitation_url(inv.token) %>
+            <code><%= link_to url, url, target: "_blank", rel: "noopener" %></code>
           </div>
         </div>
         <% end %>
@@ -90,5 +91,5 @@
       <% end %>
     </div>
   </div>
-</div>
 
+</div>

@@ -11,7 +11,6 @@ end
   has_many :users, through: :group_memberships
   has_many :group_invitations, dependent: :destroy
   has_many :weeks, dependent: :destroy
-  has_many :group_invitations, dependent: :destroy
 
   validates :name, presence: true
   validates :slug, presence: true, uniqueness: true
