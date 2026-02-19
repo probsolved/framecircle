@@ -53,52 +53,52 @@ Rails.application.configure do
   config.active_job.queue_adapter = :inline
   config.solid_queue.connects_to = { database: { writing: :queue } }
 
-# Ignore bad email addresses and do not raise email delivery errors.
-# Set this to true and configure the email server for immediate delivery to raise delivery errors.
-# config.action_mailer.raise_delivery_errors = false
+  # Ignore bad email addresses and do not raise email delivery errors.
+  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
+  # config.action_mailer.raise_delivery_errors = false
 
-# Set host to be used by links generated in mailer templates.
-# config.action_mailer.default_url_options = { host: "framercircle.com" }
+  # Set host to be used by links generated in mailer templates.
+  # config.action_mailer.default_url_options = { host: "framercircle.com" }
 
-# Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
-# config.action_mailer.smtp_settings = {
-#   user_name: Rails.application.credentials.dig(:smtp, :user_name),
-#   password: Rails.application.credentials.dig(:smtp, :password),
-#   address: "smtp.example.com",
-#   port: 587,
-#   authentication: :plain
-# }
+  # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
+  # config.action_mailer.smtp_settings = {
+  #   user_name: Rails.application.credentials.dig(:smtp, :user_name),
+  #   password: Rails.application.credentials.dig(:smtp, :password),
+  #   address: "smtp.example.com",
+  #   port: 587,
+  #   authentication: :plain
+  # }
+  # ----------------------------------------
+  # Action Mailer (Amazon SES via SMTP)
+  # ----------------------------------------
+  config.action_mailer.perform_deliveries = true
 
-config.action_mailer.perform_deliveries = true
-config.action_mailer.raise_delivery_errors = false
+  # In production, you usually want to know if mail is failing.
+  # If you prefer "never crash the request", set this to false.
+  config.action_mailer.raise_delivery_errors = ENV["RAISE_DELIVERY_ERRORS"] == "true"
 
-config.action_mailer.default_url_options = {
-  host: ENV.fetch("APP_HOST"),
+  config.action_mailer.delivery_method = :smtp
+
+  config.action_mailer.default_url_options = {
+  host: ENV.fetch("APP_HOST", "framercircle.com"),
   protocol: "https"
 }
 
-config.action_mailer.delivery_method = :smtp
-config.action_mailer.smtp_settings = {
-  address: ENV.fetch("SMTP_ADDRESS"),
-  port: ENV.fetch("SMTP_PORT", 465),
-  domain: ENV.fetch("APP_HOST"),
-  user_name: ENV.fetch("SMTP_USERNAME"),
-  password: ENV.fetch("SMTP_PASSWORD"),
-  authentication: :login,
-
-  ssl: true,
-  enable_starttls_auto: false,
-
-  # ⚠️ Accept self-signed certs (encrypted, but not authenticated)
-  openssl_verify_mode: "none",
-
-  open_timeout: 10,
-  read_timeout: 10
+  config.action_mailer.default_options = {
+  from: ENV.fetch("MAIL_FROM", "no-reply@framercircle.com")
 }
 
-config.action_mailer.default_options = {
-  from: ENV.fetch("MAIL_FROM")
-}
+  config.action_mailer.smtp_settings = {
+    address:              ENV.fetch("SES_SMTP_HOST", "email-smtp.us-east-2.amazonaws.com"),
+    port:                 ENV.fetch("SES_SMTP_PORT", "587").to_i,
+    user_name:            ENV.fetch("SES_SMTP_USERNAME"),
+    password:             ENV.fetch("SES_SMTP_PASSWORD"),
+    authentication:       :login,
+    enable_starttls_auto: true,
+    openssl_verify_mode:  "peer"
+  }
+
+
 
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
