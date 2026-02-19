@@ -76,6 +76,7 @@ Rails.application.configure do
   # In production, you usually want to know if mail is failing.
   # If you prefer "never crash the request", set this to false.
   config.action_mailer.raise_delivery_errors = ENV["RAISE_DELIVERY_ERRORS"] == "true"
+  config.action_mailer.logger = Logger.new($stdout)
 
   config.action_mailer.delivery_method = :smtp
 
