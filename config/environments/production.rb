@@ -86,18 +86,22 @@ Rails.application.configure do
 }
 
   config.action_mailer.default_options = {
-  from: ENV.fetch("MAIL_FROM", "no-reply@framercircle.com")
+  from: "no-reply@framercircle.com"
 }
 
-  config.action_mailer.smtp_settings = {
-    address:              ENV.fetch("SES_SMTP_HOST", "email-smtp.us-east-2.amazonaws.com"),
-    port:                 ENV.fetch("SES_SMTP_PORT", "587").to_i,
-    user_name:            ENV.fetch("SES_SMTP_USERNAME"),
-    password:             ENV.fetch("SES_SMTP_PASSWORD"),
-    authentication:       :login,
-    enable_starttls_auto: true,
-    openssl_verify_mode:  "peer"
-  }
+  config.action_mailer.delivery_method = :smtp
+
+config.action_mailer.smtp_settings = {
+  address: "email-smtp.us-east-2.amazonaws.com",
+  port: 587,
+  domain: "framercircle.com",            # 🔑 REQUIRED
+  authentication: :login,
+  user_name: ENV["SES_SMTP_USERNAME"],
+  password: ENV["SES_SMTP_PASSWORD"],
+  enable_starttls_auto: true,
+  open_timeout: 5,
+  read_timeout: 5
+}
 
 
 
