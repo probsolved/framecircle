@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_20_012215) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_20_212502) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -132,7 +132,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_20_012215) do
     t.bigint "group_id", null: false
     t.bigint "week_id", null: false
     t.bigint "submission_id", null: false
-    t.bigint "comment_id", null: false
+    t.bigint "comment_id"
     t.string "kind"
     t.datetime "read_at"
     t.datetime "created_at", null: false
