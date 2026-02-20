@@ -1,5 +1,6 @@
 class Comment < ApplicationRecord
   after_create_commit :notify_group_members
+  after_create_commit :track_activity
 
   belongs_to :submission
   belongs_to :user
@@ -13,27 +14,39 @@ class Comment < ApplicationRecord
 
   private
 
-def notify_group_members
-  # We assume Comment belongs_to :submission and Submission belongs_to :week
-  week  = submission.week
-  group = week.group
+  def notify_group_members
+    week  = submission.week
+    group = week.group
 
-  # Notify all active members except the commenter
-  recipient_ids = group.group_memberships
-                       .where(status: "active")
-                       .where.not(user_id: user_id)
-                       .pluck(:user_id)
+    recipient_ids = group.group_memberships
+                         .where(status: "active")
+                         .where.not(user_id: user_id)
+                         .pluck(:user_id)
 
-  recipient_ids.each do |rid|
-    Notification.create!(
-      recipient_id: rid,
-      actor_id: user_id,
+    recipient_ids.each do |rid|
+      Notification.create!(
+        recipient_id: rid,
+        actor_id: user_id,
+        group: group,
+        week: week,
+        submission: submission,
+        comment: self,
+        kind: "new_comment"
+      )
+    end
+  end
+
+  def track_activity
+    week  = submission.week
+    group = week.group
+
+    Activity.create!(
       group: group,
-      week: week,
-      submission: submission,
-      comment: self,
-      kind: "new_comment"
+      actor: user,
+      action: parent_id.present? ? "comment.reply_created" : "comment.created",
+      subject: self,
+      target: submission,
+      occurred_at: created_at
     )
   end
-end
 end

@@ -6,6 +6,7 @@ end
 
   belongs_to :owner, class_name: "User"
 
+  has_many :notifications
   has_many :group_memberships, dependent: :destroy
   has_many :members, through: :group_memberships, source: :user
   has_many :users, through: :group_memberships

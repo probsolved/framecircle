@@ -8,21 +8,29 @@
 </div>
 
 <div class="row g-3">
-  <% @groups.each do |group| %>
-  <% membership = GroupMembership.find_by(group: group, user: current_user) %>
-  <% is_admin = group.owner_id == current_user.id || membership&.role.to_s == "admin" %>
+  <% @memberships.each do |membership| %>
+  <% group  = membership.group %>
+  <% unread = @unread_counts[group.id].to_i %>
+  <% is_admin = group.owner_id == current_user.id || membership.role.to_s == "admin" %>
 
   <div class="col-12 col-md-6 col-lg-4">
     <div class="card glass-card h-100 p-3 d-flex flex-column justify-content-between">
+
       <div>
-        <!-- Group name + visibility pill -->
-        <div class="d-flex align-items-center gap-2 mb-1">
+        <!-- Group name + visibility + unread -->
+        <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
           <h5 class="group-title mb-0"><%= group.name %></h5>
 
           <% if group.public? %>
           <span class="badge rounded-pill text-bg-success">Public</span>
           <% else %>
           <span class="badge rounded-pill text-bg-secondary">Private</span>
+          <% end %>
+
+          <% if unread > 0 %>
+          <span class="badge rounded-pill text-bg-primary">
+            <%= unread %> new
+          </span>
           <% end %>
         </div>
 
@@ -35,16 +43,14 @@
         <%= link_to "Open", group_path(group), class: "btn btn-sm btn-outline-secondary" %>
 
         <% if is_admin %>
-        <%= link_to "Manage",
-                  group_manage_path(group),
-                  class: "btn btn-sm btn-outline-primary" %>
+        <%= link_to "Manage", group_manage_path(group), class: "btn btn-sm btn-outline-primary" %>
         <% end %>
       </div>
     </div>
   </div>
   <% end %>
 
-  <% if @groups.empty? %>
+  <% if @memberships.empty? %>
   <div class="col-12">
     <div class="card glass-card p-4 text-center">
       <div class="h5 mb-2">No groups yet</div>

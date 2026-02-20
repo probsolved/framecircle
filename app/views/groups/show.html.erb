@@ -48,7 +48,6 @@
 
     <%# ✅ any active member (including owner/admin) can create a week %>
     <% if current_user.admin? || @group.owner_id == current_user.id || is_member %>
-    <% if current_user.admin? || @group.owner_id == current_user.id || is_member %>
     <%= form_with model: [@group, @group.weeks.new],
                 url: group_weeks_path(@group),
                 method: :post,
@@ -74,7 +73,6 @@
       <%= f.submit "Create Week", class: "btn btn-sm btn-primary" %>
     </div>
     <% end %>
-    <% end %>
 
     <% end %>
   </div>
@@ -82,18 +80,26 @@
   <% if @weeks.any? %>
   <div class="list-group">
     <% @weeks.each do |week| %>
+    <% unread = @unread_by_week[week.id].to_i %>
+
     <%= link_to group_week_path(@group, week),
-              class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center" do %>
+            class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center" do %>
+
     <div>
-      <div class="fw-semibold"><%= week.title %></div>
+      <div class="d-flex align-items-center gap-2">
+        <span class="fw-semibold"><%= week.title %></span>
+
+        <% if unread > 0 %>
+        <span class="badge rounded-pill text-bg-primary"><%= unread %> new</span>
+        <% end %>
+      </div>
+
       <div class="small text-muted">
         <%= week.starts_on.strftime("%b %-d") %> – <%= week.ends_on.strftime("%b %-d, %Y") %>
       </div>
     </div>
 
-    <span class="badge bg-secondary">
-      <%= week.status %>
-    </span>
+    <span class="badge bg-secondary"><%= week.status %></span>
     <% end %>
     <% end %>
   </div>
@@ -102,4 +108,5 @@
     No weeks yet.
   </div>
   <% end %>
+
 </div>
