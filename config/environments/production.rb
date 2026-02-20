@@ -92,15 +92,13 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :smtp
 
 config.action_mailer.smtp_settings = {
-  address: "email-smtp.us-east-2.amazonaws.com",
-  port: 587,
-  domain: "framercircle.com",            # 🔑 REQUIRED
-  authentication: :login,
-  user_name: ENV["SES_SMTP_USERNAME"],
-  password: ENV["SES_SMTP_PASSWORD"],
+  address:              ENV["SMTP_ADDRESS"],
+  port:                 ENV["SMTP_PORT"],
+  user_name:            ENV["SMTP_USERNAME"],
+  password:             ENV["SMTP_PASSWORD"],
+  authentication:       :login,
   enable_starttls_auto: true,
-  open_timeout: 5,
-  read_timeout: 5
+  openssl_verify_mode:  "peer"
 }
 
 
