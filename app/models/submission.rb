@@ -1,3 +1,4 @@
+# app/models/submission.rb
 class Submission < ApplicationRecord
   FEEDBACK_FOCUS_OPTIONS = %w[
     composition
@@ -6,6 +7,8 @@ class Submission < ApplicationRecord
     story
     editing
   ].freeze
+
+  after_create_commit :notify_group_members_of_submission
 
   belongs_to :week
   belongs_to :user
@@ -21,6 +24,7 @@ class Submission < ApplicationRecord
 
   validates :user_id, uniqueness: { scope: :week_id }
   validate :max_three_photos
+  validate :feedback_focus_values_are_valid
 
   def locked?
     locked_at.present?
@@ -29,8 +33,6 @@ class Submission < ApplicationRecord
   def photo_count
     photos.attachments.size
   end
-
-  validate :feedback_focus_values_are_valid
 
   def feedback_focus_labels
     return [] if feedback_focus.blank?
@@ -46,6 +48,26 @@ class Submission < ApplicationRecord
   end
 
   private
+
+  def notify_group_members_of_submission
+    group = week.group
+
+    recipient_ids = group.group_memberships
+                         .where(status: "active")
+                         .where.not(user_id: user_id)
+                         .pluck(:user_id)
+
+    recipient_ids.each do |rid|
+      Notification.create!(
+        recipient_id: rid,
+        actor_id: user_id,
+        group: group,
+        week: week,
+        submission: self,
+        kind: "new_submission"
+      )
+    end
+  end
 
   def max_three_photos
     return unless photos.attachments.size > 3
