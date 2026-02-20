@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_20_212502) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_20_214213) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -129,11 +129,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_20_212502) do
   create_table "notifications", force: :cascade do |t|
     t.bigint "recipient_id", null: false
     t.bigint "actor_id", null: false
-    t.bigint "group_id", null: false
-    t.bigint "week_id", null: false
-    t.bigint "submission_id", null: false
+    t.bigint "group_id"
+    t.bigint "week_id"
+    t.bigint "submission_id"
     t.bigint "comment_id"
-    t.string "kind"
+    t.string "kind", null: false
     t.datetime "read_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
