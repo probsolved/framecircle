@@ -91,6 +91,9 @@ Rails.application.configure do
 
   config.action_mailer.delivery_method = :smtp
 
+  region = ENV.fetch("SES_SMTP_REGION", "us-east-2")
+  host   = "email-smtp.#{region}.amazonaws.com"
+
 config.action_mailer.smtp_settings = {
   address:              ENV["SMTP_ADDRESS"],
   port:                 ENV["SMTP_PORT"],
