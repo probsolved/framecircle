@@ -6,12 +6,14 @@ class TermsAcceptancesController < ApplicationController
   end
 
   def update
-    if params[:family_friendly_terms] == "1"
-      current_user.update!(family_friendly_terms_accepted_at: Time.current)
-      redirect_to root_path, notice: "Thanks — you’re all set."
-    else
-      flash.now[:alert] = "You must agree to continue."
-      render :show, status: :unprocessable_entity
-    end
+  if params[:family_friendly_terms] == "1"
+    current_user.update!(family_friendly_terms_accepted_at: Time.current)
+
+    redirect_to stored_location_for(:user) || root_path,
+                notice: "Thanks — you’re all set."
+  else
+    flash.now[:alert] = "You must agree to continue."
+    render :show, status: :unprocessable_entity
+  end
   end
 end

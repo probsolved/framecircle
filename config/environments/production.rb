@@ -53,58 +53,58 @@ Rails.application.configure do
   config.active_job.queue_adapter = :inline
   config.solid_queue.connects_to = { database: { writing: :queue } }
 
-  # Ignore bad email addresses and do not raise email delivery errors.
-  # Set this to true and configure the email server for immediate delivery to raise delivery errors.
-  # config.action_mailer.raise_delivery_errors = false
+# Ignore bad email addresses and do not raise email delivery errors.
+# Set this to true and configure the email server for immediate delivery to raise delivery errors.
+# config.action_mailer.raise_delivery_errors = false
 
-  # Set host to be used by links generated in mailer templates.
-  # config.action_mailer.default_url_options = { host: "framercircle.com" }
+# Set host to be used by links generated in mailer templates.
+# config.action_mailer.default_url_options = { host: "framercircle.com" }
 
-  # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
-  # config.action_mailer.smtp_settings = {
-  #   user_name: Rails.application.credentials.dig(:smtp, :user_name),
-  #   password: Rails.application.credentials.dig(:smtp, :password),
-  #   address: "smtp.example.com",
-  #   port: 587,
-  #   authentication: :plain
-  # }
-  # ----------------------------------------
-  # Action Mailer (Amazon SES via SMTP)
-  # ----------------------------------------
-  config.action_mailer.perform_deliveries = true
+# Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
+# config.action_mailer.smtp_settings = {
+#   user_name: Rails.application.credentials.dig(:smtp, :user_name),
+#   password: Rails.application.credentials.dig(:smtp, :password),
+#   address: "smtp.example.com",
+#   port: 587,
+#   authentication: :plain
+# }
 
-  # In production, you usually want to know if mail is failing.
-  # If you prefer "never crash the request", set this to false.
-  config.action_mailer.raise_delivery_errors = ENV["RAISE_DELIVERY_ERRORS"] == "true"
-  config.action_mailer.logger = Logger.new($stdout)
+# ----------------------------------------
+# Action Mailer (Amazon SES via SMTP)
+# ----------------------------------------
+config.action_mailer.perform_deliveries = true
+config.action_mailer.raise_delivery_errors = ENV["RAISE_DELIVERY_ERRORS"] == "true"
+config.action_mailer.delivery_method = :smtp
 
-  config.action_mailer.delivery_method = :smtp
-
-  config.action_mailer.default_url_options = {
+config.action_mailer.default_url_options = {
   host: ENV.fetch("APP_HOST", "framercircle.com"),
   protocol: "https"
 }
 
-  config.action_mailer.default_options = {
-  from: "no-reply@framercircle.com"
+config.action_mailer.default_options = {
+  from: ENV.fetch("MAIL_FROM", "no-reply@framercircle.com")
 }
 
-  config.action_mailer.delivery_method = :smtp
+# Optional: helpful mail logs in production when debugging
+if ENV["MAIL_LOG_LEVEL"].present?
+  config.action_mailer.logger = Logger.new($stdout)
+  config.action_mailer.logger.level = Logger.const_get(ENV.fetch("MAIL_LOG_LEVEL", "INFO").upcase) rescue Logger::INFO
+end
 
-  region = ENV.fetch("SES_SMTP_REGION", "us-east-2")
-  host   = "email-smtp.#{region}.amazonaws.com"
+ses_region = ENV.fetch("SES_SMTP_REGION", "us-east-2")
+ses_host   = ENV.fetch("SMTP_ADDRESS", "email-smtp.#{ses_region}.amazonaws.com")
 
 config.action_mailer.smtp_settings = {
-  address:              ENV["SMTP_ADDRESS"],
-  port:                 ENV["SMTP_PORT"],
-  user_name:            ENV["SMTP_USERNAME"],
-  password:             ENV["SMTP_PASSWORD"],
+  address:              "email-smtp.#{ENV.fetch("SES_SMTP_REGION", "us-east-2")}.amazonaws.com",
+  port:                 Integer(ENV.fetch("SMTP_PORT", "587")),
+  user_name:            ENV.fetch("SMTP_USERNAME"),
+  password:             ENV.fetch("SMTP_PASSWORD"),
   authentication:       :login,
   enable_starttls_auto: true,
-  openssl_verify_mode:  "peer"
+  openssl_verify_mode:  OpenSSL::SSL::VERIFY_PEER,
+  open_timeout:         5,
+  read_timeout:         5
 }
-
-
 
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
