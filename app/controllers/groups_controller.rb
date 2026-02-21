@@ -27,17 +27,49 @@ class GroupsController < ApplicationController
   # =========================================================
   def show
     @weeks = @group.weeks.order(starts_on: :desc)
+    week_ids = @weeks.pluck(:id)
 
-    week_ids = @weeks.map(&:id)
-
+    # Unread badge per week (for pills)
     @unread_by_week = Notification.unread
-      .where(
-        recipient_id: current_user.id,
-        group_id: @group.id,
-        week_id: week_ids
-      )
+      .where(recipient_id: current_user.id, group_id: @group.id, week_id: week_ids)
       .group(:week_id)
       .count
+
+    # --- STATUS STRIP --------------------------------------------------------
+    # Prefer a week that includes today; otherwise fall back to most recent.
+    # (No status filtering here, so the strip will still show even if `status`
+    # isn't set or doesn't use "open" yet.)
+    @status_week =
+      @group.weeks
+            .where("starts_on <= ? AND ends_on >= ?", Date.current, Date.current)
+            .order(starts_on: :desc)
+            .first ||
+      @group.weeks.order(starts_on: :desc).first
+
+    @status_my_submission =
+      if @status_week
+        Submission.find_by(week_id: @status_week.id, user_id: current_user.id)
+      end
+
+    activity_kinds = %w[new_comment new_kudo new_submission]
+
+    @status_unread_group = Notification.unread
+      .where(recipient: current_user, group: @group, kind: activity_kinds)
+      .count
+
+    @status_unread_week =
+      if @status_week
+        Notification.unread
+          .where(recipient: current_user, week: @status_week, kind: activity_kinds)
+          .count
+      else
+        0
+      end
+
+    @status_days_left =
+      if @status_week&.ends_on
+        (@status_week.ends_on.to_date - Date.current).to_i
+      end
   end
 
   # =========================================================

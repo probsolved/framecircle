@@ -5,6 +5,7 @@ class Week < ApplicationRecord
   enum :status, { open: 0, closed: 1 }
 
   validates :title, :starts_on, :ends_on, presence: true
+  validates :starts_on, uniqueness: { scope: [ :group_id, :ends_on ], message: "and end date already exist for this group" }
   validate :ends_after_starts
 
   def active?

@@ -1,5 +1,13 @@
 <%# app/views/groups/show.html.erb (or whatever this page is) %>
 
+<%= render "status_strip",
+      group: @group,
+      week: @status_week,
+      my_submission: @status_my_submission,
+      unread_group: @status_unread_group,
+      unread_week: @status_unread_week,
+      days_left: @status_days_left %>
+
 <% membership = @group.group_memberships.find_by(user_id: current_user.id) %>
 <% is_admin = @group.owner_id == current_user.id || membership&.role.to_s == "admin" %>
 <% is_member = membership.present? && membership.status.to_s == "active" %>

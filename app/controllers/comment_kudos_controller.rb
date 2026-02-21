@@ -12,6 +12,16 @@ class CommentKudosController < ApplicationController
     CommentKudo.find_or_create_by!(comment: comment, user: current_user, kind: kind)
 
     redirect_back fallback_location: group_path(comment.submission.week.group), notice: "Kudo added."
+
+    Notification.create!(
+  recipient: comment.user,          # the person who wrote the critique
+  actor: current_user,              # the person giving the kudo
+  group: comment.submission.week.group,
+  week: comment.submission.week,
+  submission: comment.submission,
+  comment: comment,
+  kind: "new_kudo"
+)
   end
 
   def destroy
