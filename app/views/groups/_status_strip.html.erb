@@ -4,14 +4,22 @@
 <% submitted = my_submission.present? %>
 
 <div class="position-sticky top-0 z-3 mb-3">
-  <div class="card glass-card">
-    <div class="card-body py-2">
-      <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-2">
 
-        <div>
+  <div class="card glass-card shadow-sm border-0 overflow-hidden">
+    <!-- Accent bar -->
+    <div class="w-100" style="height: 4px; background: linear-gradient(90deg, rgba(13,110,253,0.95), rgba(25,135,84,0.85));"></div>
+
+    <div class="card-body py-2" style="background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(248,249,250,0.92));">
+      <div class="d-flex flex-column flex-lg-row justify-content-between gap-2">
+
+        <!-- LEFT: Week context -->
+        <div class="min-w-0">
           <div class="d-flex align-items-center gap-2 flex-wrap">
             <span class="fw-semibold">This week:</span>
-            <span><%= week.title %></span>
+
+            <span class="fw-semibold text-truncate" style="max-width: 26rem;">
+              <%= week.title %>
+            </span>
 
             <% if submitted %>
             <span class="badge rounded-pill text-bg-success">Submitted</span>
@@ -22,29 +30,31 @@
             <% if days_left && days_left >= 0 %>
             <% if days_left == 0 %>
             <span class="badge rounded-pill text-bg-danger">Ends today</span>
-            <% elsif days_left == 1 %>
-            <span class="badge rounded-pill text-bg-danger">1 day left</span>
             <% elsif days_left <= 3 %>
-            <span class="badge rounded-pill text-bg-warning"><%= days_left %> days left</span>
+            <span class="badge rounded-pill text-bg-warning">
+              <%= pluralize(days_left, "day") %> left
+            </span>
             <% else %>
-            <span class="badge rounded-pill text-bg-secondary"><%= days_left %> days left</span>
+            <span class="badge rounded-pill text-bg-secondary">
+              <%= pluralize(days_left, "day") %> left
+            </span>
             <% end %>
             <% end %>
 
             <% if unread_week.to_i > 0 %>
-            <span class="badge rounded-pill text-bg-primary"><%= unread_week %> new activity</span>
+            <span class="badge rounded-pill text-bg-primary">
+              <%= pluralize(unread_week, "new activity") %>
+            </span>
             <% end %>
           </div>
 
           <div class="small text-muted mt-1">
             <%= week.starts_on.strftime("%b %-d") %> – <%= week.ends_on.strftime("%b %-d, %Y") %>
-            <% if unread_group.to_i > unread_week.to_i %>
-            • <%= unread_group %> unread in group
-            <% end %>
           </div>
         </div>
 
-        <div class="d-grid gap-2 d-md-flex">
+        <!-- RIGHT: Actions -->
+        <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
           <% if submitted %>
           <%= link_to "View Your Submission",
                     group_week_submission_path(group, week),
@@ -61,12 +71,48 @@
         </div>
 
       </div>
+
+      <!-- ICON STATUS ROW -->
+      <div class="d-flex flex-wrap gap-3 mt-2 small">
+
+        <div class="d-flex align-items-center gap-1 text-muted">
+          <span>📸</span>
+          <% if submitted %>
+          <span>You’ve submitted</span>
+          <% else %>
+          <span>No submission yet</span>
+          <% end %>
+        </div>
+
+        <% if unread_week.to_i > 0 %>
+        <div class="d-flex align-items-center gap-1 fw-semibold text-primary">
+          <span>💬</span>
+          <span><%= pluralize(unread_week, "new item") %></span>
+        </div>
+        <% end %>
+
+        <% if unread_group.to_i > unread_week.to_i %>
+        <div class="d-flex align-items-center gap-1 text-muted">
+          <span>👥</span>
+          <span><%= pluralize(unread_group, "unread in group") %></span>
+        </div>
+        <% end %>
+
+        <% if submitted && unread_week.to_i == 0 %>
+        <div class="d-flex align-items-center gap-1 text-muted">
+          <span>📝</span>
+          <span>Consider critiquing others</span>
+        </div>
+        <% end %>
+
+      </div>
     </div>
   </div>
+
 </div>
 
 <% else %>
 <div class="alert alert-info mb-3">
-  No open week yet. Create one to get things started.
+  No week yet. Create one to get things started.
 </div>
 <% end %>
